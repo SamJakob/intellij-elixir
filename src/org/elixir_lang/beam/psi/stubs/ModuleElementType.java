@@ -7,6 +7,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * @param <S> The stub element that {@link #serialize(StubElement, StubOutputStream)} and
  *            {@link #indexStub(StubElement, IndexSink)} should accept.  These stubs should be created by
@@ -15,13 +17,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class ModuleElementType<S extends StubElement<?>, P extends PsiElement>
         extends ModuleStubElementType<S, P> {
+
     /**
      * @throws IllegalArgumentException stubs should never be created from {@link LighterAST} and
      *                                  {@link LighterASTNode}:  Stubs should be created by
      *                                  {@link org.elixir_lang.beam.psi.BeamFileImpl#buildFileStub(byte[], String)}.
      */
     @Override
-    public S createStub(LighterAST tree, LighterASTNode node, StubElement parentStub) {
+    public @NotNull S createStub(@NotNull LighterAST tree, @NotNull LighterASTNode node, @NotNull StubElement parentStub) {
         throw new IllegalArgumentException(
                 "ModuleElementType should never create stubs from LighterAST tree as they are only create from " +
                         "BeamFileImpl#buildFileStub and ModuleElementType#deserialize"
@@ -48,4 +51,5 @@ public abstract class ModuleElementType<S extends StubElement<?>, P extends PsiE
                         "BeamFileImpl#buildFileStub and ModuleElementType#deserialize"
         );
     }
+
 }

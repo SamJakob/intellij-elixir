@@ -18,16 +18,16 @@ import java.util.Set;
  * Created by zyuyou on 15/7/3.
  */
 public class SelectOtpApps extends SelectImportedProjectsStep<OtpApp> {
-  private final Set<String> myDuplicateModuleNames = new HashSet<String>();
+  private final Set<String> myDuplicateModuleNames = new HashSet<>();
 
   public SelectOtpApps(@NotNull WizardContext context) {
     super(context);
-    fileChooser.addElementsMarkListener(new ElementsChooser.ElementsMarkListener<OtpApp>() {
-      @Override
-      public void elementMarkChanged(OtpApp element, boolean isMarked) {
-        evalDuplicates();
-        fileChooser.repaint();
-      }
+    fileChooser.addElementsMarkListener(new ElementsChooser.ElementsMarkListener<>() {
+        @Override
+        public void elementMarkChanged(OtpApp element, boolean isMarked) {
+            evalDuplicates();
+            fileChooser.repaint();
+        }
     });
   }
 
@@ -70,7 +70,7 @@ public class SelectOtpApps extends SelectImportedProjectsStep<OtpApp> {
 
   private void evalDuplicates(){
     List<OtpApp> selectedOtpApps = fileChooser.getMarkedElements();
-    Set<String> contains = new HashSet<String>(selectedOtpApps.size());
+    Set<String> contains = new HashSet<>(selectedOtpApps.size());
     myDuplicateModuleNames.clear();
     for (OtpApp otpApp :selectedOtpApps){
       if(!contains.add(otpApp.getName())){

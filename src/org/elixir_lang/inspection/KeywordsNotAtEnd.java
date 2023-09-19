@@ -46,7 +46,7 @@ public class KeywordsNotAtEnd extends LocalInspectionTool {
         file.accept(
                 new PsiRecursiveElementWalkingVisitor() {
                     @Override
-                    public void visitElement(PsiElement element) {
+                    public void visitElement(@NotNull PsiElement element) {
                         PsiElement keywordsElementNotAtEnd = null;
                         PsiElement listElement = null;
 

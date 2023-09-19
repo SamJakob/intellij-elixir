@@ -10,7 +10,7 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Pair
 import org.elixir_lang.Icons
-import org.elixir_lang.sdk.elixir.Type.Companion.instance
+import org.elixir_lang.sdk.elixir.Type.Util.instance
 import javax.swing.Icon
 
 /**

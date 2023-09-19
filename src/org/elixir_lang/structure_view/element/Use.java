@@ -43,7 +43,7 @@ public class Use extends Element<Call> {
      */
     @NotNull
     @Override
-    public TreeElement[] getChildren() {
+    public TreeElement @NotNull [] getChildren() {
         return new TreeElement[0];
     }
 

@@ -44,8 +44,8 @@ class Step(parent: NewProjectWizardLanguageStep) : AbstractNewProjectWizardStep(
                                                    NewProjectWizardBaseData by parent,
                                                    Data {
     override val sdkProperty = propertyGraph.property<Sdk?>(null)
-    override val mixNewAppProperty = propertyGraph.property<String>("")
-    override val mixNewModuleProperty = propertyGraph.property<String>("")
+    override val mixNewAppProperty = propertyGraph.property("")
+    override val mixNewModuleProperty = propertyGraph.property("")
     override val mixNewSupProperty = propertyGraph.property(false)
     override val mixNewUmbrellaProperty = propertyGraph.property(false)
 
@@ -68,7 +68,7 @@ class Step(parent: NewProjectWizardLanguageStep) : AbstractNewProjectWizardStep(
                         .bindText(mixNewAppProperty)
                         .align(AlignX.FILL)
                         .validationOnApply {
-                            if (mixNewApp.isNullOrBlank()) {
+                            if (mixNewApp.isBlank()) {
                                 val name = this@Step.name
 
                                 if (!name.matches(APPLICATION_NAME_REGEX)) {
@@ -210,7 +210,7 @@ class Step(parent: NewProjectWizardLanguageStep) : AbstractNewProjectWizardStep(
     }
 }
 
-private val ELIXIR_SDK_TYPE_FILTER = { it: SdkTypeId -> it == Type.instance; }
+private val ELIXIR_SDK_TYPE_FILTER = { it: SdkTypeId -> it == Type.Util.instance; }
 private val ANY_SDK_FILTER: ((Sdk) -> Boolean) = { true }
 private val ANY_SDK_TYPE_FILTER: ((SdkTypeId) -> Boolean) = { true }
 private val ANY_SUGGESTED_SDK_FILTER: ((SdkListItem.SuggestedItem) -> Boolean) = { true }

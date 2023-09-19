@@ -1,6 +1,5 @@
 package org.elixir_lang.beam.psi.impl;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
@@ -88,9 +87,8 @@ public abstract class ModuleElementImpl extends PsiElementBase implements PsiCom
      *
      * @return the element text as a character array.
      */
-    @NotNull
     @Override
-    public char[] textToCharArray() {
+    public char @NotNull [] textToCharArray() {
         PsiElement mirror = getMirror();
         char[] charArray = ArrayUtil.EMPTY_CHAR_ARRAY;
 

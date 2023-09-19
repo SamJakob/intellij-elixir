@@ -13,7 +13,7 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.templateLanguages.ConfigurableTemplateLanguageFileViewProvider;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.psi.tree.IElementType;
-import gnu.trove.THashSet;
+import gnu.trove.set.hash.THashSet;
 import org.elixir_lang.ElixirLanguage;
 import org.elixir_lang.eex.Language;
 import org.elixir_lang.eex.element_type.EmbeddedElixir;
@@ -148,7 +148,7 @@ public class ViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider
     }
 
     @Override
-    protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(VirtualFile fileCopy) {
+    protected @NotNull MultiplePsiFilesPerDocumentFileViewProvider cloneInner(@NotNull VirtualFile fileCopy) {
         return new ViewProvider(getManager(), fileCopy, false, baseLanguage, templateDataLanguage);
     }
 

@@ -1,15 +1,12 @@
 package org.elixir_lang.beam;
 
-import gnu.trove.THashMap;
 import org.elixir_lang.NameArity;
 import org.elixir_lang.call.Visibility;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import gnu.trove.map.hash.THashMap;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static org.elixir_lang.call.Visibility.PRIVATE;
 import static org.elixir_lang.call.Visibility.PUBLIC;
@@ -23,9 +20,9 @@ public class MacroNameArity implements Comparable<MacroNameArity> {
      * CONSTANTS
      */
 
-    public static final Map<Visibility, String> FUNCTION_MACRO_BY_VISIBILITY = new THashMap<>();
+    public static final Map<Visibility, String> FUNCTION_MACRO_BY_VISIBILITY = new EnumMap<>(Visibility.class);
     private static final String MACRO_EXPORT_PREFIX = "MACRO-";
-    private static final Map<Visibility, String> MACRO_MACRO_BY_VISIBILITY = new THashMap<>();
+    private static final Map<Visibility, String> MACRO_MACRO_BY_VISIBILITY = new EnumMap<>(Visibility.class);
     public static final List<String> MACRO_ORDER = Arrays.asList(DEFMACRO, DEFMACROP, DEF, DEFP);
     private static final Map<String, Integer> ORDER_BY_MACRO = new THashMap<>();
 
@@ -131,8 +128,7 @@ public class MacroNameArity implements Comparable<MacroNameArity> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MacroNameArity)) return false;
-        MacroNameArity that = (MacroNameArity) o;
+        if (!(o instanceof MacroNameArity that)) return false;
         return macro.equals(that.macro) && name.equals(that.name) && arity.equals(that.arity);
     }
 

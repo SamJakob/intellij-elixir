@@ -23,17 +23,14 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.EnvironmentUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import gnu.trove.map.hash.THashMap;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * OS-independent way of executing external processes with complex parameters.
@@ -68,15 +65,12 @@ public class GeneralCommandLine implements UserDataHolder {
         return myWorkDirectory;
     }
 
-    @NotNull
-    public GeneralCommandLine withWorkDirectory(@Nullable final String path) {
-        return withWorkDirectory(path != null ? new File(path) : null);
+    public void withWorkDirectory(@Nullable final String path) {
+        withWorkDirectory(path != null ? new File(path) : null);
     }
 
-    @NotNull
-    public GeneralCommandLine withWorkDirectory(@Nullable final File workDirectory) {
+    public void withWorkDirectory(@Nullable final File workDirectory) {
         myWorkDirectory = workDirectory;
-        return this;
     }
 
     /**
@@ -85,25 +79,6 @@ public class GeneralCommandLine implements UserDataHolder {
     @NotNull
     public Map<String, String> getEnvironment() {
         return myEnvParams;
-    }
-
-    /**
-     * @deprecated use {@link #getEnvironment()} (to remove in IDEA 14)
-     */
-    @SuppressWarnings("unused")
-    public Map<String, String> getEnvParams() {
-        return getEnvironment();
-    }
-
-    /**
-     * @deprecated use {@link #getEnvironment()} (to remove in IDEA 14)
-     */
-    @SuppressWarnings("unused")
-    public void setEnvParams(@Nullable Map<String, String> envParams) {
-        myEnvParams.clear();
-        if (envParams != null) {
-            myEnvParams.putAll(envParams);
-        }
     }
 
     /**
@@ -157,19 +132,15 @@ public class GeneralCommandLine implements UserDataHolder {
     }
 
     public List<String> getCommandLineList(@Nullable final String exeName) {
-        final List<String> commands = new ArrayList<String>();
-        if (exeName != null) {
-            commands.add(exeName);
-        } else if (myExePath != null) {
-            commands.add(myExePath);
-        } else {
-            commands.add("<null>");
-        }
+        final List<String> commands = new ArrayList<>();
+        commands.add(Objects.requireNonNullElseGet(
+            exeName,
+            () -> Objects.requireNonNullElse(myExePath, "<null>"))
+        );
         commands.addAll(myProgramParams.getList());
         return commands;
     }
 
-    @SuppressWarnings("UnresolvedPropertyKey")
     @NotNull
     public Process createProcess() throws ExecutionException {
         if (LOG.isDebugEnabled()) {
@@ -207,7 +178,6 @@ public class GeneralCommandLine implements UserDataHolder {
         return builder.start();
     }
 
-    @SuppressWarnings("UnresolvedPropertyKey")
     private void checkWorkingDirectory() throws ExecutionException {
         if (myWorkDirectory == null) {
             return;

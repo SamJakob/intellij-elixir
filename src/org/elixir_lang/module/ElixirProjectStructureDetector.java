@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 public class ElixirProjectStructureDetector extends ProjectStructureDetector {
   @NotNull
   @Override
-  public DirectoryProcessingResult detectRoots(@NotNull File dir, @NotNull File[] children, @NotNull File base, @NotNull List<DetectedProjectRoot> result) {
+  public DirectoryProcessingResult detectRoots(@NotNull File dir, @NotNull File @NotNull [] children, @NotNull File base, @NotNull List<DetectedProjectRoot> result) {
     Pattern pattern = Pattern.compile(".*\\.ex[s]*");
     List<File> filesByMask = FileUtil.findFilesByMask(pattern, base);
     if(!filesByMask.isEmpty()){
@@ -54,7 +54,7 @@ public class ElixirProjectStructureDetector extends ProjectStructureDetector {
     if(!roots.isEmpty() && !builder.hasRootsFromOtherDetectors(this)){
       List<ModuleDescriptor> modules = projectDescriptor.getModules();
       if(modules.isEmpty()){
-        modules = new ArrayList<ModuleDescriptor>();
+        modules = new ArrayList<>();
         for(DetectedProjectRoot root : roots){
           modules.add(new ModuleDescriptor(root.getDirectory(), ElixirModuleType.getInstance(), ContainerUtil.<DetectedSourceRoot>emptyList()));
         }
@@ -65,7 +65,7 @@ public class ElixirProjectStructureDetector extends ProjectStructureDetector {
 
   @Override
   public List<ModuleWizardStep> createWizardSteps(ProjectFromSourcesBuilder builder, ProjectDescriptor projectDescriptor, Icon stepIcon) {
-    ProjectJdkForModuleStep projectJdkForModuleStep = new ProjectJdkForModuleStep(builder.getContext(), Type.getInstance());
+    ProjectJdkForModuleStep projectJdkForModuleStep = new ProjectJdkForModuleStep(builder.getContext(), Type.Util.getInstance());
     return Collections.<ModuleWizardStep>singletonList(projectJdkForModuleStep);
   }
 

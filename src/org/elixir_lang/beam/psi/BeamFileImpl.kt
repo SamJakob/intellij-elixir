@@ -334,6 +334,7 @@ class BeamFileImpl private constructor(
      *
      * @return a single-element array containing `this`
      */
+    @Deprecated("Deprecated in Java")
     override fun getPsiRoots(): Array<PsiFile> = arrayOf(this)
 
     override fun getViewProvider(): FileViewProvider = fileViewProvider

@@ -19,8 +19,8 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.util.Objects;
 
-import static org.elixir_lang.sdk.elixir.Type.addNewCodePathsFromInternErlangSdk;
-import static org.elixir_lang.sdk.elixir.Type.removeCodePathsFromInternalErlangSdk;
+import static org.elixir_lang.sdk.elixir.Type.Util.addNewCodePathsFromInternErlangSdk;
+import static org.elixir_lang.sdk.elixir.Type.Util.removeCodePathsFromInternalErlangSdk;
 import static org.elixir_lang.sdk.erlang_dependent.Type.staticIsValidDependency;
 
 public class AdditionalDataConfigurable implements com.intellij.openapi.projectRoots.AdditionalDataConfigurable {
@@ -39,25 +39,25 @@ public class AdditionalDataConfigurable implements com.intellij.openapi.projectR
         this.sdkModificator = sdkModificator;
 
         sdkModelListener = new SdkModel.Listener() {
-            public void sdkAdded(Sdk sdk) {
+            public void sdkAdded(@NotNull Sdk sdk) {
                 if (staticIsValidDependency(sdk)) {
                     addErlangSdk(sdk);
                 }
             }
 
-            public void beforeSdkRemove(Sdk sdk) {
+            public void beforeSdkRemove(@NotNull Sdk sdk) {
                 if (staticIsValidDependency(sdk)) {
                     removeErlangSdk(sdk);
                 }
             }
 
-            public void sdkChanged(Sdk sdk, String previousName) {
+            public void sdkChanged(@NotNull Sdk sdk, String previousName) {
                 if (staticIsValidDependency(sdk)) {
                     updateErlangSdkList(sdk, previousName);
                 }
             }
 
-            public void sdkHomeSelected(final Sdk sdk, final String newSdkHome) {
+            public void sdkHomeSelected(final @NotNull Sdk sdk, final @NotNull String newSdkHome) {
                 if (staticIsValidDependency(sdk)) {
                     internalErlangSdkUpdate(sdk);
                 }
@@ -118,7 +118,7 @@ public class AdditionalDataConfigurable implements com.intellij.openapi.projectR
         internalErlangSdksComboBox.setRenderer(
                 new SimpleListCellRenderer() {
                     @Override
-                    public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
+                    public void customize(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
                         if (value instanceof Sdk) {
                             setText(((Sdk) value).getName());
                         }

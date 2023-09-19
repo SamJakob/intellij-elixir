@@ -26,7 +26,7 @@ import org.elixir_lang.Mix
 import org.elixir_lang.credo.Action
 import org.elixir_lang.jps.builder.ParametersList
 import org.elixir_lang.notification.setup_sdk.Notifier
-import org.elixir_lang.sdk.elixir.Type.Companion.mostSpecificSdk
+import org.elixir_lang.sdk.elixir.Type.Util.mostSpecificSdk
 import java.nio.file.Paths
 
 class Global : GlobalInspectionTool() {

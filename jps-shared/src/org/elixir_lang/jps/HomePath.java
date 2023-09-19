@@ -23,6 +23,7 @@ public class HomePath {
     public static final String LINUX_DEFAULT_HOME_PATH = "/usr/local/lib";
     public static final Version UNKNOWN_VERSION = new Version(0, 0, 0);
     private static final File HOMEBREW_ROOT = new File("/usr/local/Cellar");
+    private static final File APPLE_SILICON_HOMEBREW_ROOT = new File("/opt/homebrew/Cellar");
     private static final File NIX_STORE = new File("/nix/store/");
     private static final Logger LOGGER = Logger.getInstance(HomePath.class);
 
@@ -32,7 +33,7 @@ public class HomePath {
     public static void eachEbinPath(@NotNull String homePath, @NotNull Consumer<Path> ebinPathConsumer) {
         Path lib = Paths.get(homePath, "lib");
 
-        try (DirectoryStream<Path> libDirectoryStream = Files.newDirectoryStream(lib, path -> Files.isDirectory(path))) {
+        try (DirectoryStream<Path> libDirectoryStream = Files.newDirectoryStream(lib, Files::isDirectory)) {
             libDirectoryStream.forEach(
                     app -> {
                         try (DirectoryStream<Path> ebinDirectoryStream = Files.newDirectoryStream(app, "ebin")) {
@@ -57,7 +58,7 @@ public class HomePath {
         Path lib = Paths.get(homePath, "lib");
         boolean hasEbinPath = false;
 
-        try (DirectoryStream<Path> libDirectoryStream = Files.newDirectoryStream(lib, path -> Files.isDirectory(path))) {
+        try (DirectoryStream<Path> libDirectoryStream = Files.newDirectoryStream(lib, Files::isDirectory)) {
             for (Path app : libDirectoryStream) {
                 try (DirectoryStream<Path> ebinDirectoryStream = Files.newDirectoryStream(app, "ebin")) {
                     if (ebinDirectoryStream.iterator().hasNext()) {
@@ -89,6 +90,7 @@ public class HomePath {
                                      @NotNull String name,
                                      @NotNull Function<File, File> versionPathToHomePath) {
         mergeNameSubdirectories(homePathByVersion, HOMEBREW_ROOT, name, versionPathToHomePath);
+        mergeNameSubdirectories(homePathByVersion, APPLE_SILICON_HOMEBREW_ROOT, name, versionPathToHomePath);
     }
 
     private static void mergeNameSubdirectories(@NotNull Map<Version, String> homePathByVersion,

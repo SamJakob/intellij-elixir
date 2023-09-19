@@ -50,7 +50,7 @@ abstract class Configurable: SearchableConfigurable, com.intellij.openapi.option
     })
 
     override fun apply() {
-        editorByProjectJdkImpl.forEach { _, editor ->
+        editorByProjectJdkImpl.forEach { (_, editor) ->
             editor.apply()
         }
         projectSdksModel.apply()
@@ -62,13 +62,13 @@ abstract class Configurable: SearchableConfigurable, com.intellij.openapi.option
         val decorator = ToolbarDecorator
                 .createDecorator(sdkList)
                 .disableUpDownActions()
-                .setAddAction({
+                .setAddAction {
                     addSdk()
-                })
-                .setEditAction(null)
-                .setRemoveAction({
+                }
+            .setEditAction(null)
+                .setRemoveAction {
                     removeSdk()
-                })
+                }
 
         sdkListPanel = decorator.createPanel()
         sdkList.refresh()
@@ -170,7 +170,7 @@ abstract class Configurable: SearchableConfigurable, com.intellij.openapi.option
     }
 
     private fun addSdk() {
-        projectSdksModel.doAdd(sdkListPanel, sdkType(), { sdk -> addCreatedSdk(sdk)  })
+        projectSdksModel.doAdd(sdkListPanel, sdkType()) { sdk -> addCreatedSdk(sdk) }
     }
 
     private fun removeSdk() {
@@ -182,8 +182,8 @@ abstract class Configurable: SearchableConfigurable, com.intellij.openapi.option
             projectSdksModel.removeSdk(it)
 
             editorByProjectJdkImpl[it]?.let {
-                sdkPanel.getValue(sdkPanel.key, false).let {
-                    sdkPanel.remove(it)
+                sdkPanel.getValue(sdkPanel.key, false).let { panel ->
+                    sdkPanel.remove(panel)
                 }
             }
             editorByProjectJdkImpl.remove(it)
@@ -194,7 +194,9 @@ abstract class Configurable: SearchableConfigurable, com.intellij.openapi.option
 
     private fun updateSdkPanel(selectedValue: ProjectJdkImpl?) {
         val selectedEditor = selectedValue?.let {
-            editorByProjectJdkImpl.computeIfAbsent(it, { Editor(projectSdksModel, history!!, it) })
+            editorByProjectJdkImpl.computeIfAbsent(it) { jdk ->
+                Editor(projectSdksModel, history!!, jdk)
+            }
         }
 
         sdkPanel.select(selectedEditor, true)
@@ -203,7 +205,7 @@ abstract class Configurable: SearchableConfigurable, com.intellij.openapi.option
 
 private fun Library.ModifiableModel.addRoots(roots: Array<VirtualFile>) =
         roots.forEach {
-            addRoot(it, com.intellij.openapi.roots.OrderRootType.CLASSES)
+            addRoot(it, OrderRootType.CLASSES)
         }
 
 private fun Library.ModifiableModel.clearRoots() {

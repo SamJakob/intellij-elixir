@@ -41,35 +41,35 @@ object Icons {
 
     object Visibility {
         @JvmField
-        val PRIVATE = PlatformIcons.PRIVATE_ICON
+        val PRIVATE: Icon = PlatformIcons.PRIVATE_ICON
 
         @JvmField
-        val PUBLIC = PlatformIcons.PUBLIC_ICON
+        val PUBLIC: Icon = PlatformIcons.PUBLIC_ICON
 
         @JvmStatic
         fun from(visibility: org.elixir_lang.call.Visibility?): Icon {
-            var icon: Icon? = null
-
-            if (visibility != null) {
+            val icon: Icon = if (visibility != null) {
                 when (visibility) {
-                    org.elixir_lang.call.Visibility.PRIVATE -> icon = PRIVATE
-                    org.elixir_lang.call.Visibility.PUBLIC -> icon = PUBLIC
+                    org.elixir_lang.call.Visibility.PRIVATE -> PRIVATE
+                    org.elixir_lang.call.Visibility.PUBLIC -> PUBLIC
                 }
 
-                assert(icon != null)
             } else {
-                icon = UNKNOWN
+                UNKNOWN
             }
 
-            return icon!!
+            return icon
         }
     }
+
+    @JvmField
+    val BEHAVIOR: Icon = IconLoader.getIcon("/icons/file/elixir/behavior.svg", Icons.javaClass)
 
     @JvmField
     val CALLBACK = AllIcons.Gutter.ImplementedMethod
 
     @JvmField
-    val CALL_DEFINITION = PlatformIcons.FUNCTION_ICON
+    val CALL_DEFINITION: Icon = PlatformIcons.FUNCTION_ICON
 
     @JvmField
     val CALL_DEFINITION_CLAUSE: Icon = RowIconFactory.create(CALL_DEFINITION, PlatformIcons.PACKAGE_LOCAL_ICON)
@@ -82,7 +82,7 @@ object Icons {
         RowIconFactory.create(AllIcons.RunConfigurations.TestState.Run, PlatformIcons.PACKAGE_LOCAL_ICON)
 
     @JvmField
-    val EXCEPTION = PlatformIcons.EXCEPTION_CLASS_ICON
+    val EXCEPTION: Icon = PlatformIcons.EXCEPTION_CLASS_ICON
 
     @JvmField
     val FIELD = AllIcons.Nodes.Field
@@ -90,6 +90,8 @@ object Icons {
     @JvmField
     val FILE = IconLoader.getIcon("/icons/file/elixir.svg", Icons.javaClass)
 
+    @JvmField
+    val MACRO: Icon = PlatformIcons.RECORD_ICON
 
     @JvmField
     val MIX_MODULE_CONFLICT = AllIcons.Actions.Cancel
@@ -157,5 +159,8 @@ object Icons {
 
     @JvmField
     val MODULE = IconLoader.getIcon("/icons/module/elixir.svg", Icons.javaClass)
+
+    @JvmField
+    val MODULE_ITEM: Icon = IconLoader.getIcon("/icons/file/elixir/module.svg", Icons.javaClass)
 }
 

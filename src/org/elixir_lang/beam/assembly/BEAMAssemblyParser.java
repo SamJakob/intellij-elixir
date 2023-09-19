@@ -10,11 +10,12 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.LightPsiParser;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class BEAMAssemblyParser implements PsiParser, LightPsiParser {
 
-  public ASTNode parse(IElementType t, PsiBuilder b) {
+  public @NotNull ASTNode parse(@NotNull IElementType t, @NotNull PsiBuilder b) {
     parseLight(t, b);
     return b.getTreeBuilt();
   }

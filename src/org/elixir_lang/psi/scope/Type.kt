@@ -35,9 +35,9 @@ abstract class Type : PsiScopeProcessor {
             // typing a module attribute on line above a pre-existing one
             is AtOperation -> execute(element, state)
             is Call -> execute(element, state)
-            // Anonymous function type siganture
+            // Anonymous function type signature
             is ElixirStabParenthesesSignature -> execute(element, state)
-            // Anonymous function type siganture
+            // Anonymous function type signature
             is ElixirStabNoParenthesesSignature -> execute(element, state)
             // type variable in a `when key: type`
             is ElixirKeywordKey -> executeOnParameter(element, state)

@@ -95,7 +95,7 @@ public class Root extends ProjectImportWizardStep {
                             handler.addProcessListener(
                                     new ProcessAdapter() {
                                         @Override
-                                        public void onTextAvailable(ProcessEvent event, Key outputType) {
+                                        public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
                                             String text = event.getText();
                                             indicator.setText2(text);
                                         }

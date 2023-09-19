@@ -28,7 +28,7 @@ public class TypedHandler extends TypedHandlerDelegate {
      * @param file the file into which the {@code charTyped} was typed
      */
     @Override
-    public Result charTyped(char charTyped, Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+    public @NotNull Result charTyped(char charTyped, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
         Result result = Result.CONTINUE;
 
         if (file instanceof ElixirFile) {

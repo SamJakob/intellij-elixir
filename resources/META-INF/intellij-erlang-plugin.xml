@@ -1,10 +1,13 @@
 <!-- Extensions that use classes only available when the intellij-erlang plugin is installed. -->
-<idea-plugin version="2">
+<idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
-    <annotator language="Erlang" implementationClass="org.elixir_lang.annotator.Module"/>
+    <annotator
+            language="Erlang"
+            implementationClass="org.elixir_lang.annotator.Module" />
   </extensions>
 
   <extensions defaultExtensionNs="org.elixir_lang">
-    <packageManager implementation="org.elixir_lang.rebar3.PackageManager"/>
+    <packageManager
+            implementation="org.elixir_lang.rebar3.PackageManager" />
   </extensions>
 </idea-plugin>

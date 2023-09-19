@@ -103,7 +103,7 @@ public class Quote extends Element<Call> {
      */
     @NotNull
     @Override
-    public TreeElement[] getChildren() {
+    public TreeElement @NotNull [] getChildren() {
         Modular modular = modular();
         TreeElement[] children;
 

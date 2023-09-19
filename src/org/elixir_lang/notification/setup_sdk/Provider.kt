@@ -41,7 +41,7 @@ class Provider : EditorNotificationProvider {
                 .findFile(virtualFile)
                 ?.let { psiFile ->
                     if (psiFile.language === ElixirLanguage &&
-                        Type.mostSpecificSdk(psiFile) == null
+                        Type.Util.mostSpecificSdk(psiFile) == null
                     ) {
                         createPanel(project, psiFile)
                     } else {
@@ -68,7 +68,7 @@ class Provider : EditorNotificationProvider {
             SdkPopupFactory
                 .newBuilder()
                 .withProject(project)
-                .withSdkType(Type.instance)
+                .withSdkType(Type.Util.instance)
                 .updateProjectSdkFromSelection()
                 .buildPopup()
                 .showInFocusCenter()

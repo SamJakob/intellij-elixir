@@ -17,7 +17,7 @@ import org.elixir_lang.Elixir.elixirSdkHasErlangSdk
 import org.elixir_lang.Mix
 import org.elixir_lang.code_style.CodeStyleSettings
 import org.elixir_lang.psi.ElixirFile
-import org.elixir_lang.sdk.elixir.Type.Companion.mostSpecificSdk
+import org.elixir_lang.sdk.elixir.Type.Util.mostSpecificSdk
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 

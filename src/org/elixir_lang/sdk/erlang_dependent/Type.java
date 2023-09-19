@@ -10,7 +10,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.elixir_lang.sdk.elixir.Type.erlangSdkType;
+import static org.elixir_lang.sdk.elixir.Type.Util.erlangSdkType;
 
 /**
  * An SDK that depends on an Erlang SDK, either
@@ -40,19 +40,19 @@ public abstract class Type extends DependentSdkType {
     }
 
     @Override
-    protected boolean isValidDependency(Sdk sdk) {
+    protected boolean isValidDependency(@NotNull Sdk sdk) {
         return staticIsValidDependency(sdk);
     }
 
     @Override
-    public String getUnsatisfiedDependencyMessage() {
+    public @NotNull String getUnsatisfiedDependencyMessage() {
         return "You need to configure an " + getDependencyType().getName() + ".  Click OK to be taken through the " +
                 getDependencyType().getName() + " configuration.  Click Cancel to stop configuring this SDK AND the "+
                 getDependencyType().getName() + ".";
     }
 
     @Override
-    public SdkType getDependencyType() {
+    public @NotNull SdkType getDependencyType() {
         return erlangSdkType();
     }
 

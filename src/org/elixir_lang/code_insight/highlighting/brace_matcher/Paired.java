@@ -74,7 +74,7 @@ class Paired implements PairedBraceMatcher {
      */
     @Contract(pure = true)
     @Override
-    public BracePair[] getPairs() {
+    public BracePair @NotNull [] getPairs() {
         return BRACE_PAIRS;
     }
 

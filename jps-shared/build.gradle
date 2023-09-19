@@ -1,4 +1,4 @@
-jar.archiveName = "jps-shared.jar"
+jar.archiveFileName = "jps-shared.jar"
 testClasses.enabled = false
 
 repositories {
@@ -12,5 +12,6 @@ sourceSets {
     }
 }
 
+runIde.enabled = false
 publishPlugin.enabled = false
 verifyPlugin.enabled = false

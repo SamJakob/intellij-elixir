@@ -48,7 +48,7 @@ public class NoParenthesesManyStrict extends LocalInspectionTool {
         file.accept(
                 new PsiRecursiveElementWalkingVisitor() {
                     @Override
-                    public void visitElement(PsiElement element) {
+                    public void visitElement(@NotNull PsiElement element) {
                         PsiElement elementWithAmbiguousComma = null;
 
                         if (element instanceof ElixirUnqualifiedNoParenthesesManyArgumentsCall) {

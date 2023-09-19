@@ -2,7 +2,7 @@ package org.elixir_lang.mix.runner;
 
 import com.google.common.base.CaseFormat;
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder;
-import gnu.trove.THashMap;
+import gnu.trove.map.hash.THashMap;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

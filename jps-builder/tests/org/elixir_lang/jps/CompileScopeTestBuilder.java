@@ -20,8 +20,8 @@ import java.util.*;
  */
 public class CompileScopeTestBuilder {
   private final boolean myForceBuild;
-  private final Set<BuildTargetType<?>> myTargetTypes = new HashSet<BuildTargetType<?>>();
-  private final Set<BuildTarget<?>> myTargets = new HashSet<BuildTarget<?>>();
+  private final Set<BuildTargetType<?>> myTargetTypes = new HashSet<>();
+  private final Set<BuildTarget<?>> myTargets = new HashSet<>();
 
   public CompileScopeTestBuilder(boolean forceBuild) {
     myForceBuild = forceBuild;

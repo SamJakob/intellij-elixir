@@ -39,7 +39,7 @@ public class CharacterCodeTest extends org.elixir_lang.elixir_flex_lexer.Test {
      */
 
     private static List<Character> digits() {
-        List<Character> digits = new ArrayList<Character>(DECIMAL_DIGIT_COUNT + LOWER_CASE_HEX_DIGIT_COUNT + UPPER_CASE_HEX_DIGIT_COUNT);
+        List<Character> digits = new ArrayList<>(DECIMAL_DIGIT_COUNT + LOWER_CASE_HEX_DIGIT_COUNT + UPPER_CASE_HEX_DIGIT_COUNT);
 
         for (char digit = FIRST_DECIMAL_DIGIT; digit <= LAST_DECIMAL_DIGIT; digit++) {
             digits.add(digit);
@@ -60,7 +60,7 @@ public class CharacterCodeTest extends org.elixir_lang.elixir_flex_lexer.Test {
     public static CharSequence[] dataPoints() {
         List<Character> localDigits = digits();
         final int size = localDigits.size();
-        List<CharSequence> charSequences = new ArrayList<CharSequence>((int) Math.pow(size, 2) + size);
+        List<CharSequence> charSequences = new ArrayList<>((int) Math.pow(size, 2) + size);
 
         for (char highDigit : localDigits) {
             for (char lowDigit : localDigits) {

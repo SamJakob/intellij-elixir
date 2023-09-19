@@ -58,9 +58,8 @@ public class Quote implements ItemPresentation, Parent {
      *
      * @return the object name.
      */
-    @Nullable
     @Override
-    public String getPresentableText() {
+    public @NotNull String getPresentableText() {
         return null;
     }
 }

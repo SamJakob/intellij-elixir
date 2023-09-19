@@ -65,13 +65,13 @@ public class Overridable extends Element<Call> {
      */
     @NotNull
     @Override
-    public TreeElement[] getChildren() {
+    public TreeElement @NotNull [] getChildren() {
         QuotableKeywordList keywordArguments = keywordArguments(navigationItem);
         TreeElement[] children;
 
         if (keywordArguments != null) {
             List<QuotableKeywordPair> quotableKeywordPairList = keywordArguments.quotableKeywordPairList();
-            List<TreeElement> treeElementList = new ArrayList<TreeElement>(quotableKeywordPairList.size());
+            List<TreeElement> treeElementList = new ArrayList<>(quotableKeywordPairList.size());
 
             for (QuotableKeywordPair quotableKeywordPair : quotableKeywordPairList) {
                 Quotable keywordKey = quotableKeywordPair.getKeywordKey();

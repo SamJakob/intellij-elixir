@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * Created by zyuyou on 2015/5/27.
- * https://github.com/ignatov/intellij-erlang/blob/master/jps-shared/src/org/intellij/erlang/jps/model/JpsErlangModelSerializerExtension.java
+ * <a href="https://github.com/ignatov/intellij-erlang/blob/master/jps-shared/src/org/intellij/erlang/jps/model/JpsErlangModelSerializerExtension.java">...</a>
  */
 public class SerializerExtension extends JpsModelSerializerExtension {
     public static final Logger LOGGER = Logger.getInstance(SerializerExtension.class);
@@ -41,7 +41,7 @@ public class SerializerExtension extends JpsModelSerializerExtension {
     @NotNull
     @Override
     public List<JpsSdkPropertiesSerializer<SdkProperties>> getSdkPropertiesSerializers() {
-        return Collections.singletonList(new JpsSdkPropertiesSerializer<SdkProperties>(ELIXIR_SDK_TYPE_ID, Elixir.INSTANCE) {
+        return Collections.singletonList(new JpsSdkPropertiesSerializer<>(ELIXIR_SDK_TYPE_ID, Elixir.INSTANCE) {
             @NotNull
             @Override
             public SdkProperties loadProperties(@Nullable Element propertiesElement) {
@@ -56,10 +56,6 @@ public class SerializerExtension extends JpsModelSerializerExtension {
                 }
 
                 return new SdkProperties(erlangSdkName);
-            }
-
-            @Override
-            public void saveProperties(@NotNull SdkProperties properties, @NotNull Element element) {
             }
         });
     }

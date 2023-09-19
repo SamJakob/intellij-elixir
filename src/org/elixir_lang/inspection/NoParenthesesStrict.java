@@ -47,7 +47,7 @@ public class NoParenthesesStrict extends LocalInspectionTool {
         file.accept(
                 new PsiRecursiveElementWalkingVisitor() {
                     @Override
-                    public void visitElement(PsiElement element) {
+                    public void visitElement(@NotNull PsiElement element) {
                         if (element instanceof ElixirNoParenthesesStrict) {
                             LocalQuickFix localQuickFix = new RemoveSpaceInFrontOfNoParenthesesStrict(
                                     element.getParent()

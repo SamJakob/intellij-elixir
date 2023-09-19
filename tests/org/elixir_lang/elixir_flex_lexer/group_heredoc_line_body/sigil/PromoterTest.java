@@ -4,6 +4,7 @@ import com.intellij.psi.tree.IElementType;
 import org.elixir_lang.ElixirFlexLexer;
 import org.elixir_lang.elixir_flex_lexer.TokenTest;
 import org.elixir_lang.psi.ElixirTypes;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Ignore;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public abstract class PromoterTest extends TokenTest {
     }
 
     @Override
-    protected void start(CharSequence charSequence) {
+    protected void start(@NotNull CharSequence charSequence) {
         // start to trigger GROUP state
         CharSequence fullCharSequence = "~" + sigilName() + "'''\n" + charSequence;
         super.start(fullCharSequence);

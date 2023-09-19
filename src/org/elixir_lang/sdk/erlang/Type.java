@@ -10,9 +10,8 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Version;
-import com.intellij.util.containers.ContainerUtil;
-import org.elixir_lang.jps.sdk_type.Erlang;
 import org.elixir_lang.jps.HomePath;
+import org.elixir_lang.jps.sdk_type.Erlang;
 import org.elixir_lang.sdk.erlang_dependent.AdditionalDataConfigurable;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +46,7 @@ public class Type extends SdkType {
     private static final Function<File, File> VERSION_PATH_TO_HOME_PATH =
             versionPath -> new File(versionPath, "lib/erlang");
     private static final Logger LOGGER = Logger.getInstance(Type.class);
-    private final Map<String, Release> releaseBySdkHome = ContainerUtil.createWeakMap();
+    private final Map<String, Release> releaseBySdkHome = new WeakHashMap<>();
 
 
     public Type() {
@@ -186,14 +185,14 @@ public class Type extends SdkType {
     }
 
     @Override
-    public boolean isValidSdkHome(String path) {
+    public boolean isValidSdkHome(@NotNull String path) {
         File erl = Erlang.getByteCodeInterpreterExecutable(path);
 
         return erl.canExecute();
     }
 
     @Override
-    public String suggestSdkName(String currentSdkName, String sdkHome) {
+    public @NotNull String suggestSdkName(String currentSdkName, @NotNull String sdkHome) {
         return getDefaultSdkName(sdkHome, detectSdkVersion(sdkHome));
     }
 

@@ -28,7 +28,7 @@ public class ElixirCompilerSettings implements PersistentStateComponent<Compiler
     }
 
     @Override
-    public void loadState(CompilerOptions state) {
+    public void loadState(@NotNull CompilerOptions state) {
         myCompilerOptions = state;
     }
 

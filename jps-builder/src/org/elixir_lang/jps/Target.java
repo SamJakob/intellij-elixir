@@ -31,17 +31,17 @@ public class Target extends ModuleBasedTarget<SourceRootDescriptor> {
   }
 
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return myModule.getName();
   }
 
   @Override
-  public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry, TargetOutputIndex outputIndex) {
+  public @NotNull Collection<BuildTarget<?>> computeDependencies(@NotNull BuildTargetRegistry targetRegistry, @NotNull TargetOutputIndex outputIndex) {
     return computeDependencies();
   }
 
   public Collection<BuildTarget<?>> computeDependencies(){
-    List<BuildTarget<?>> dependencies = new ArrayList<BuildTarget<?>>();
+    List<BuildTarget<?>> dependencies = new ArrayList<>();
 
     Set<JpsModule> modules = JpsJavaExtensionService.dependencies(myModule).includedIn(JpsJavaClasspathKind.compile(isTests())).getModules();
     for (JpsModule module : modules){
@@ -59,12 +59,12 @@ public class Target extends ModuleBasedTarget<SourceRootDescriptor> {
 
   @NotNull
   @Override
-  public List<SourceRootDescriptor> computeRootDescriptors(JpsModel model,
-                                                           ModuleExcludeIndex index,
-                                                           IgnoredFileIndex ignoredFileIndex,
-                                                           BuildDataPaths dataPaths) {
+  public List<SourceRootDescriptor> computeRootDescriptors(@NotNull JpsModel model,
+                                                           @NotNull ModuleExcludeIndex index,
+                                                           @NotNull IgnoredFileIndex ignoredFileIndex,
+                                                           @NotNull BuildDataPaths dataPaths) {
 
-    List<SourceRootDescriptor> result = new ArrayList<SourceRootDescriptor>();
+    List<SourceRootDescriptor> result = new ArrayList<>();
     JavaSourceRootType type = isTests() ? JavaSourceRootType.TEST_SOURCE : JavaSourceRootType.SOURCE;
     for(JpsTypedModuleSourceRoot<JavaSourceRootProperties> root : myModule.getSourceRoots(type)){
       result.add(new SourceRootDescriptor(root.getFile(), this));
@@ -74,7 +74,7 @@ public class Target extends ModuleBasedTarget<SourceRootDescriptor> {
 
   @Nullable
   @Override
-  public SourceRootDescriptor findRootDescriptor(String rootId, BuildRootIndex rootIndex) {
+  public SourceRootDescriptor findRootDescriptor(@NotNull String rootId, BuildRootIndex rootIndex) {
     return ContainerUtil.getFirstItem(rootIndex.getRootDescriptors(new File(rootId), Collections.singletonList(getElixirTargetType()), null));
   }
 
@@ -86,7 +86,7 @@ public class Target extends ModuleBasedTarget<SourceRootDescriptor> {
 
   @NotNull
   @Override
-  public Collection<File> getOutputRoots(CompileContext context) {
+  public Collection<File> getOutputRoots(@NotNull CompileContext context) {
     return ContainerUtil.createMaybeSingletonList(JpsJavaExtensionService.getInstance().getOutputDirectory(myModule, isTests()));
   }
 

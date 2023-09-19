@@ -765,13 +765,14 @@ public class ElixirLangElixirParsingTestCase extends ParsingTestCase {
         }
 
         switch (parse) {
-            case CORRECT:
+            case CORRECT -> {
                 assertWithoutLocalError();
                 assertQuotedCorrectly();
-                break;
-            case ERROR:
+            }
+            case ERROR -> {
                 assertWithLocalError();
                 Quoter.assertError(myFile);
+            }
         }
     }
 }

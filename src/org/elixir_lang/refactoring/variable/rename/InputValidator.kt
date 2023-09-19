@@ -8,7 +8,7 @@ import com.intellij.refactoring.rename.RenameInputValidator
 import com.intellij.refactoring.rename.RenameInputValidatorEx
 import com.intellij.util.ProcessingContext
 import org.elixir_lang.psi.call.Call
-import org.elixir_lang.refactoring.variable.rename.Handler.Companion.isAvailableOnResolved
+import org.elixir_lang.refactoring.variable.rename.Handler.Util.isAvailableOnResolved
 import org.elixir_lang.refactoring.variable.rename.Inplace.isIdentifier
 
 class InputValidator : RenameInputValidatorEx {

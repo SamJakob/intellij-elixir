@@ -8,7 +8,6 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
 import java.util.Vector;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +28,7 @@ public class BracedCharacterCodeTest extends org.elixir_lang.elixir_flex_lexer.T
 
     @DataPoints
     public static CharSequence[] dataPoints() {
-        Vector<CharSequence> charSequences = new Vector<CharSequence>();
+        Vector<CharSequence> charSequences = new Vector<>();
 
         // ensure all valid digits are covered for each length
 
@@ -94,7 +93,6 @@ public class BracedCharacterCodeTest extends org.elixir_lang.elixir_flex_lexer.T
         return charSequences.toArray(new CharSequence[charSequences.size()]);
     };
 
-    @NotNull
     protected void start(@NotNull CharSequence charSequence) {
         // start of "\"" + promoter to trigger GROUP state
         CharSequence fullCharSequence = "\"" + charSequence;

@@ -2,8 +2,8 @@ package org.elixir_lang.jps;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.containers.MultiMap;
-import gnu.trove.THashSet;
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase;
 
 import java.io.File;
@@ -12,24 +12,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by zyuyou on 15/7/17.
  */
 public class TestProjectBuilderLogger extends ProjectBuilderLoggerBase {
-  private MultiMap<String, File> myCompiledFiles = new MultiMap<String, File>();
-  private Set<File> myDeletedFiles = new THashSet<File>(FileUtil.FILE_HASHING_STRATEGY);
+  private MultiMap<String, String> myCompiledFiles = new MultiMap<>();
+  private Set<String> myDeletedFiles = CollectionFactory.createFilePathSet();
 
   @Override
   public void logDeletedFiles(Collection<String> paths) {
-    for (String path:paths){
-      myDeletedFiles.add(new File(path));
-    }
+    myDeletedFiles.addAll(paths);
   }
 
   @Override
   public void logCompiledFiles(Collection<File> files, String builderName, String description) throws IOException {
-    myCompiledFiles.putValues(builderName, files);
+    myCompiledFiles.putValues(builderName, files.stream()
+            .map(File::getPath)
+            .map(FileUtil::toCanonicalPath)
+            .collect(Collectors.toList()));
   }
 
   @Override
@@ -54,19 +56,23 @@ public class TestProjectBuilderLogger extends ProjectBuilderLoggerBase {
     assertRelativePaths(baseDirs, myDeletedFiles, paths);
   }
 
-  private static void assertRelativePaths(File[] baseDirs, Collection<File> files, String[] expected){
-    List<String> relativePaths = new ArrayList<String>();
-    for (File file: files){
+  private static void assertRelativePaths(File[] baseDirs, Collection<String> files, String[] expected){
+    List<String> relativePaths = new ArrayList<>();
+    for (String filePath: files){
+      File file = new File(filePath);
       String path = file.getAbsolutePath();
-      for(File baseDir:baseDirs){
+
+      for(File baseDir : baseDirs){
         if(baseDir != null && FileUtil.isAncestor(baseDir, file, false)){
           path = FileUtil.getRelativePath(baseDir, file);
           break;
         }
       }
-      relativePaths.add(FileUtil.toSystemIndependentName(path));
-    }
-    UsefulTestCase.assertSameElements(relativePaths, expected);
 
+        assert path != null;
+        relativePaths.add(FileUtil.toSystemIndependentName(path));
+    }
+
+    UsefulTestCase.assertSameElements(relativePaths, expected);
   }
 }

@@ -21,7 +21,7 @@ public class Atom extends PsiReferenceBase<ElixirAtom> implements PsiPolyVariant
 
     @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
         List<LookupElement> lookupElementList = Variants.lookupElementList(myElement);
 
         return lookupElementList.toArray(new Object[lookupElementList.size()]);
@@ -37,7 +37,7 @@ public class Atom extends PsiReferenceBase<ElixirAtom> implements PsiPolyVariant
      */
     @NotNull
     @Override
-    public ResolveResult[] multiResolve(boolean incompleteCode) {
+    public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
         return ResolveCache
                 .getInstance(this.myElement.getProject())
                 .resolveWithCaching(this, org.elixir_lang.reference.resolver.Atom.INSTANCE, false, incompleteCode);

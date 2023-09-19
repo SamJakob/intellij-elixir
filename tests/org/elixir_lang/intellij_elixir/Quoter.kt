@@ -9,6 +9,7 @@ import org.elixir_lang.Keyword.isKeyword
 import org.elixir_lang.psi.impl.ElixirPsiImplUtil
 import org.elixir_lang.psi.impl.ParentImpl.elixirString
 import org.hamcrest.CoreMatchers
+import org.hamcrest.MatcherAssert
 import org.jetbrains.annotations.Contract
 import org.junit.Assert
 import org.junit.ComparisonFailure
@@ -54,7 +55,7 @@ object Quoter {
         } catch (e: OtpErlangExit) {
             exception = e
         }
-        Assert.assertThat(exception, CoreMatchers.instanceOf(OtpErlangExit::class.java))
+        MatcherAssert.assertThat(exception, CoreMatchers.instanceOf(OtpErlangExit::class.java))
     }
 
     @Contract("null -> fail")
@@ -135,8 +136,8 @@ object Quoter {
                 it.toInt() == 0x0A -> {
                     "\\n"
                 }
-                CharUtils.isAsciiPrintable(it.toChar()) -> {
-                    it.toChar().toString()
+                CharUtils.isAsciiPrintable(it.toInt().toChar()) -> {
+                    it.toInt().toChar().toString()
                 }
                 else -> {
                     String.format("\\x%02X", it)
@@ -157,9 +158,7 @@ object Quoter {
             toString(prefix, elements, postfix, depth) { element ->
                 val pair = element as OtpErlangTuple
                 val key = pair.elementAt(0)
-                val value = pair.elementAt(1)
-
-                val suffix = when (value) {
+                val suffix = when (val value = pair.elementAt(1)) {
                     // One-liners
                     is OtpErlangInt, is OtpErlangFloat, is OtpErlangDouble, is OtpErlangLong -> " ${toString(value, 0)}"
                     else -> {
@@ -179,29 +178,27 @@ object Quoter {
         }
     }
 
-    private fun toString(quoted: OtpErlangObject, depth: Int): String = if (quoted is OtpErlangBoolean ||
-            quoted is OtpErlangAtom ||
-            quoted is OtpErlangByte ||
-            quoted is OtpErlangChar ||
-            quoted is OtpErlangFloat ||
-            quoted is OtpErlangDouble ||
-            quoted is OtpErlangExternalFun ||
-            quoted is OtpErlangFun ||
-            quoted is OtpErlangInt ||
-            quoted is OtpErlangLong ||
-            quoted is OtpErlangMap ||
-            quoted is OtpErlangPid ||
-            quoted is OtpErlangString) {
-        val indent = indent(depth)
-        quoted.toString().prependIndent(indent)
-    } else if (quoted is OtpErlangBitstr) {
-        toString(quoted, depth)
-    } else if (quoted is OtpErlangList) {
-        toString(quoted, depth)
-    } else if (quoted is OtpErlangTuple) {
-        toString(quoted, depth)
-    } else {
-        throw IllegalArgumentException("Don't know how to convert ${quoted.javaClass} to string")
+    private fun toString(quoted: OtpErlangObject, depth: Int): String = when (quoted) {
+        is OtpErlangBoolean, is OtpErlangAtom, is OtpErlangByte, is OtpErlangChar, is OtpErlangFloat, is OtpErlangDouble, is OtpErlangExternalFun, is OtpErlangFun, is OtpErlangInt, is OtpErlangLong, is OtpErlangMap, is OtpErlangPid, is OtpErlangString -> {
+            val indent = indent(depth)
+            quoted.toString().prependIndent(indent)
+        }
+
+        is OtpErlangBitstr -> {
+            toString(quoted, depth)
+        }
+
+        is OtpErlangList -> {
+            toString(quoted, depth)
+        }
+
+        is OtpErlangTuple -> {
+            toString(quoted, depth)
+        }
+
+        else -> {
+            throw IllegalArgumentException("Don't know how to convert ${quoted.javaClass} to string")
+        }
     }
 
     private fun toString(quoted: OtpErlangTuple, depth: Int): String =

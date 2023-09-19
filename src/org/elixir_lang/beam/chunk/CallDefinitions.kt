@@ -1,6 +1,5 @@
 package org.elixir_lang.beam.chunk
 
-import gnu.trove.THashSet
 import org.elixir_lang.call.Visibility
 import org.elixir_lang.beam.Beam
 import org.elixir_lang.beam.chunk.Chunk.Companion.unsignedInt
@@ -8,6 +7,7 @@ import org.elixir_lang.beam.chunk.call_definitions.CallDefinition.Companion.from
 import org.elixir_lang.beam.chunk.Chunk.TypeID
 import org.elixir_lang.beam.MacroNameArity
 import org.elixir_lang.beam.chunk.call_definitions.CallDefinition
+import gnu.trove.set.hash.THashSet
 import java.util.*
 
 class CallDefinitions(private val typeID: TypeID, var callDefinitionCollection: Collection<CallDefinition>) {

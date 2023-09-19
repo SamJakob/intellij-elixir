@@ -7,7 +7,7 @@ import com.intellij.psi.ResolveState
 import com.intellij.psi.PsiReference
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.util.PsiTreeUtil
-import gnu.trove.THashMap
+import gnu.trove.map.hash.THashMap
 import org.elixir_lang.psi.impl.ElixirPsiImplUtil
 import org.elixir_lang.psi.putInitialVisitedElement
 import org.elixir_lang.psi.scope.Variable

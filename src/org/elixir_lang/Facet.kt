@@ -8,6 +8,7 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.libraries.LibraryTable
 import org.elixir_lang.facet.Configuration
+import org.elixir_lang.sdk.elixir.Type
 
 class Facet(
     facetType: FacetType<*, *>,
@@ -65,7 +66,7 @@ class Facet(
         fun sdks(): kotlin.collections.List<Sdk> =
             ProjectJdkTable
                 .getInstance()
-                .getSdksOfType(org.elixir_lang.sdk.elixir.Type.instance)
+                .getSdksOfType(Type.Util.instance)
 
         private fun sdkByName(): Map<String, Sdk> = sdks().associateBy { it.name }
     }

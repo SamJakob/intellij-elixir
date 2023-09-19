@@ -69,7 +69,7 @@ public abstract class ParsingTestCase extends com.intellij.testFramework.Parsing
         root.accept(
                 new PsiRecursiveElementWalkingVisitor() {
                     @Override
-                    public void visitElement(PsiElement element) {
+                    public void visitElement(@NotNull PsiElement element) {
                         if (element instanceof PsiErrorElement) {
                             errorElementList.add(element);
                         }
@@ -89,7 +89,7 @@ public abstract class ParsingTestCase extends com.intellij.testFramework.Parsing
     protected void assertWithLocalError(@NotNull Language language) {
         List<PsiElement> errorElementList = localErrors(language);
 
-        assertTrue("No PsiErrorElements found in parsed file PSI", !errorElementList.isEmpty());
+        assertFalse("No PsiErrorElements found in parsed file PSI", errorElementList.isEmpty());
     }
 
     protected void assertWithoutLocalError() {
@@ -130,11 +130,6 @@ public abstract class ParsingTestCase extends com.intellij.testFramework.Parsing
         String travis = System.getenv("TRAVIS");
 
         return travis != null && travis.equals("true");
-    }
-
-    @Override
-    protected boolean skipSpaces() {
-        return false;
     }
 
     @Override

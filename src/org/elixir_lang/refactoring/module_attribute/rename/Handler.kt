@@ -62,9 +62,13 @@ class Handler : RenameHandler {
      *                    (it is recommended to pass DataManager.getDataContext() instead of null)
      */
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
-        val nonNullDataContext = dataContext ?: DataManager.getInstance().dataContext
+        if (dataContext != null) {
+            invoke(dataContext.let(CommonDataKeys.EDITOR::getData)!!, elements, dataContext)
+        }
 
-        invoke(nonNullDataContext.let(CommonDataKeys.EDITOR::getData)!!, elements, nonNullDataContext)
+        DataManager.getInstance().dataContextFromFocusAsync.onSuccess {
+            invoke(it.let(CommonDataKeys.EDITOR::getData)!!, elements, it)
+        }
     }
 
     private fun createRenamer(elementToRename: PsiElement, editor: Editor): VariableInplaceRenamer =
@@ -72,7 +76,7 @@ class Handler : RenameHandler {
 
     // See `com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler.doRename`
     private fun invoke(editor: Editor, element: PsiElement, dataContext: DataContext) {
-        val renamer = createRenamer(element, editor!!)
+        val renamer = createRenamer(element, editor)
         val startedRename = renamer.performInplaceRename()
 
         if (!startedRename) {
@@ -89,7 +93,7 @@ class Handler : RenameHandler {
     private fun isAvailableOnReference(psiReference: PsiReference) =
         psiReference
             .toPsiElementList()
-            .any { isAvailableOnResolved(it) }
+            .any { Util.isAvailableOnResolved(it) }
 
     private fun performDialogRename(element: PsiElement, editor: Editor?, dataContext: DataContext) {
         RenameHandlerRegistry
@@ -122,7 +126,8 @@ class Handler : RenameHandler {
             null
         }
 
-    companion object {
+    object Util {
         internal fun isAvailableOnResolved(element: PsiElement): Boolean = element is AtUnqualifiedNoParenthesesCall<*>
     }
+
 }

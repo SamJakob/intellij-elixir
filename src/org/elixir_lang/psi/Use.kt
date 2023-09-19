@@ -68,7 +68,7 @@ object Use {
      */
     @JvmStatic
     fun `is`(call: Call): Boolean =
-        call.isCalling(KERNEL, USE, 1) || call.isCalling(KERNEL, USE, 2);
+        call.isCalling(KERNEL, USE, 1) || call.isCalling(KERNEL, USE, 2)
 
     /**
      * The modular that is used by `useCall`.

@@ -52,7 +52,7 @@ class Provider : com.intellij.lang.findUsages.FindUsagesProvider {
      *
      * @return the word scanner implementation.
      */
-    override fun getWordsScanner(): WordsScanner? =
+    override fun getWordsScanner(): WordsScanner =
         DefaultWordsScanner(
             ElixirLexer(),
             IDENTIFIER_TOKEN_SET,

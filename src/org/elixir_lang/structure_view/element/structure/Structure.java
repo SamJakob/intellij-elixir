@@ -66,9 +66,9 @@ public class Structure extends Element<Call> {
      */
     @NotNull
     @Override
-    public TreeElement[] getChildren() {
+    public TreeElement @NotNull [] getChildren() {
         PsiElement[] finalArguments = finalArguments(navigationItem);
-        List<TreeElement> childList = new ArrayList<TreeElement>();
+        List<TreeElement> childList = new ArrayList<>();
 
         assert finalArguments != null;
         assert finalArguments.length == 1;

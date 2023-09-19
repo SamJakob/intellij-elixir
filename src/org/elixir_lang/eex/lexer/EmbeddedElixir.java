@@ -5,7 +5,7 @@ import com.intellij.lexer.LexerBase;
 import com.intellij.lexer.LexerPosition;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
-import gnu.trove.THashMap;
+import gnu.trove.map.hash.THashMap;
 import org.elixir_lang.ElixirLanguage;
 import org.elixir_lang.ElixirLexer;
 import org.jetbrains.annotations.Contract;

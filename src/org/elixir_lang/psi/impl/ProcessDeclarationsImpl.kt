@@ -154,7 +154,7 @@ object ProcessDeclarationsImpl {
                         Use.`is`(call) ||
                         call.isCalling(KERNEL, DESTRUCTURE) || // left operand
                         call.isCallingMacro(KERNEL, IF) || // match in condition
-                        call.isCallingMacro(KERNEL, Function.FOR) || // comprehension match variable
+                        call.isCallingMacro(KERNEL, FOR) || // comprehension match variable
                         call.isCalling(KERNEL, MATCH_QUESTION_MARK) ||
                         call.isCalling(KERNEL, REQUIRE) ||
                         call.isCallingMacro(KERNEL, UNLESS) || // match in condition

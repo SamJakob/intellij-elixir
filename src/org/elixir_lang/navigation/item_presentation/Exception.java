@@ -14,8 +14,7 @@ public class Exception implements ItemPresentation {
 
     @Nullable
     private final String location;
-    @Nullable
-    private final String name;
+    private final @NotNull String name;
 
     /*
      * Constructors

@@ -13,7 +13,7 @@ import org.elixir_lang.espec.Gatherer
 import org.elixir_lang.file.containsFileWithSuffix
 import org.elixir_lang.psi.ElixirFile
 import org.elixir_lang.sdk.elixir.Type
-import org.elixir_lang.sdk.elixir.Type.Companion.mostSpecificSdk
+import org.elixir_lang.sdk.elixir.Type.Util.mostSpecificSdk
 import java.io.File
 
 class MixESpecRunConfigurationProducer :
@@ -142,7 +142,7 @@ private fun setupConfigurationFromContextImpl(
             }
             val sdkTypeId = sdk?.sdkType
 
-            if ((sdkTypeId == null || sdkTypeId == Type.instance) &&
+            if ((sdkTypeId == null || sdkTypeId == Type.Util.instance) &&
                 ProjectRootsUtil.isInTestSource(psiElement.virtualFile, psiElement.project) &&
                 containsFileWithSuffix(psiElement, SUFFIX)
             ) {

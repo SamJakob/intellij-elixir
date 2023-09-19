@@ -36,7 +36,9 @@ object Import {
      * Whether `call` is an `import Module` or `import Module, opts` call
      */
     @JvmStatic
-    fun `is`(call: Call): Boolean = call.isCalling(KERNEL, IMPORT) && call.resolvedFinalArity() in 1..2
+    fun `is`(call: Call): Boolean {
+        return call.isCalling(KERNEL, IMPORT) && call.resolvedFinalArity() in 1..2
+    }
 
     @JvmStatic
     fun treeWalkUp(

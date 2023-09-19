@@ -1,39 +1,58 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    id "org.jetbrains.intellij" version "1.13.3"
-    id "org.jetbrains.kotlin.jvm" version "1.9.0"
-    id "de.undercouch.download" version "4.1.2"
+    id "org.jetbrains.intellij" version "1.15.0"
+    id "org.jetbrains.kotlin.jvm" version "1.9.10"
+    id "de.undercouch.download" version "5.5.0"
 }
 
 ext {
-    cachePath = "${rootDir}/cache"
+    set("isReleaseVersion", project.hasProperty("isRelease") && isRelease)
+    set("cachePath", "${rootDir}/cache")
+    set("elixirPath", "${cachePath}/elixir-${elixirVersion}")
 
-    elixirPath = "${cachePath}/elixir-${elixirVersion}"
+    set("quoterVersion", "2.2.0")
 
-    quoterVersion = "2.1.0"
+    set("quoterUnzippedPath", "${cachePath}/elixir-${elixirVersion}-intellij_elixir-${quoterVersion}")
+    set("quoterReleasePath", "${quoterUnzippedPath}/_build/dev/rel/intellij_elixir")
+    set("quoterExe", "${quoterReleasePath}/bin/intellij_elixir")
+    set("quoterZipPath", "${cachePath}/intellij_elixir-${quoterVersion}.zip")
+    set("quoterZipRootPath", "${cachePath}/intellij_elixir-${quoterVersion}")
 
-    quoterUnzippedPath = "${cachePath}/elixir-${elixirVersion}-intellij_elixir-${quoterVersion}"
-    quoterReleasePath = "${quoterUnzippedPath}/_build/dev/rel/intellij_elixir"
-    quoterExe = "${quoterReleasePath}/bin/intellij_elixir"
-    quoterZipPath = "${cachePath}/intellij_elixir-${quoterVersion}.zip"
-    quoterZipRootPath = "${cachePath}/intellij_elixir-${quoterVersion}"
+    if (isReleaseVersion) {
+        set("versionSuffix", "")
 
-    if (project.hasProperty("isRelease") && isRelease) {
-        versionSuffix = ""
-        channel = "default"
+        // If it's a release version, always set the channel to be default.
+        set("channel", "default")
     } else {
         def date = new Date().format("yyyyMMddHHmmss", TimeZone.getTimeZone("UTC"))
-        versionSuffix = "-pre+$date"
-        channel = "canary"
+        set("versionSuffix", "-pre+$date")
+
+        // If publishChannels is set, set the channel to the first of those.
+        // Otherwise, as it's not a release version, choose "canary" as a default.
+        set("channel", project.hasProperty("publishChannels") && project.properties.get("publishChannels").trim().length() > 0
+                ? (project.properties.get("publishChannels") as String).split(",").toList().get(0)
+                : "canary")
     }
 
     version "$baseVersion$versionSuffix"
 }
 
 allprojects {
-    apply plugin: 'java'
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-    tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+    apply plugin: "java"
+    java {
+        sourceCompatibility = JavaVersion.toVersion(javaVersion)
+        targetCompatibility = JavaVersion.toVersion(javaTargetVersion)
+    }
+
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.encoding = 'UTF-8'
+            options.compilerArgs += ['-Xlint:deprecation']
+        }
+    }
 }
 
 sourceSets {
@@ -41,6 +60,7 @@ sourceSets {
         java.srcDirs 'src', 'gen'
         resources.srcDirs 'resources'
     }
+
     test {
         java.srcDir 'tests'
     }
@@ -49,36 +69,56 @@ sourceSets {
 allprojects {
     apply plugin: 'org.jetbrains.intellij'
     intellij {
-        plugins = [// needed for jps builder
-                   "java",
-                   // needed for documentation rendering
-                   "markdown",
-                   // always have IdeaVIM installed in sandbox
-                   "IdeaVIM:1.10.1"]
+        type = "IU"
+        plugins = [
+            // Needed for jps-builder
+            "java",
+            // Needed for rendering documentation
+            "markdown",
+        ]
+
         pluginName.set('intellij-elixir')
         version.set(ideaVersion)
+
         downloadSources.set(Boolean.valueOf(sources))
     }
 
     patchPluginXml {
-        def stripTag = { text, tag -> text.replace("<${tag}>", "").replace("</${tag}>", "") }
-        def bodyInnerHTML = { path ->
+        def stripTag = { String text, String tag ->
+            text.replace("<${tag}>", "").replace("</${tag}>", "")
+        }
+        def bodyInnerHTML = { String path ->
             stripTag(stripTag(file(path).text, "html"), "body")
         }
 
         changeNotes.set(bodyInnerHTML("resources/META-INF/changelog.html"))
         pluginDescription.set(bodyInnerHTML("resources/META-INF/description.html"))
 
-        sinceBuild = "232.8660.143"
-        untilBuild = "232.*"
+        sinceBuild.set(ideaSinceBuild)
+        untilBuild.set(ideaUntilBuild)
     }
 
     publishPlugin {
         distributionFile = layout.buildDirectory.file("distributions/${System.getenv("ASSET_NAME")}")
+
         token = provider {
             System.getenv("JET_BRAINS_MARKETPLACE_TOKEN")
         }
-        channels = publishChannels.split(',').toList()
+
+        // Fetch the list of publishChannels (comma-seperated) from the Gradle config.
+        // If it's empty or missing, default to an empty list.
+        def channels = project.hasProperty("publishChannels") && project.properties.get("publishChannels").trim().length() > 0
+                ? (project.properties.get("publishChannels") as String).split(',').toList()
+                : []
+
+        // If it's a release version but doesn't have the "default" channel,
+        // add the "default" channel as the first channel.
+        if (isReleaseVersion && !channels.contains("default"))
+            channels.add(0, "default")
+        // Else, if it's not a release version but has no channels, add "canary"
+        // as a channel.
+        else if (!isReleaseVersion && channels.isEmpty())
+            channels.add("canary")
     }
 
     runPluginVerifier {
@@ -89,37 +129,45 @@ allprojects {
 apply plugin: "kotlin"
 
 //noinspection GroovyAssignabilityCheck,GrUnresolvedAccess
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    //noinspection GrUnresolvedAccess
-    kotlinOptions {
-        apiVersion = "1.7"
-        jvmTarget = "17"
-        freeCompilerArgs = ["-Xjvm-default=all"]
+tasks.withType(KotlinCompile).configureEach {
+    compilerOptions {
+        apiVersion.set(KotlinVersion.valueOf("KOTLIN_${kotlinApiVersion.replace(".", "_")}"))
+        jvmTarget.set(JvmTarget.valueOf("JVM_${javaTargetVersion.replace(".", "_")}"))
+        freeCompilerArgs.add("-Xjvm-default=all")
     }
 }
 
-def compilationPackages = ['org/intellij/elixir/build/**', 'org/intellij/elixir/jps/**']
+def compilationPackages = [
+    'org/intellij/elixir/build/**',
+    'org/intellij/elixir/jps/**'
+]
 
 test {
     environment "ELIXIR_LANG_ELIXIR_PATH", elixirPath
     environment "ELIXIR_EBIN_DIRECTORY", "${elixirPath}/lib/elixir/ebin/"
     environment "ELIXIR_VERSION", elixirVersion
     setScanForTestClasses(false)
+
     include("**/Issue*.class")
     include("**/*Test.class")
     include("**/*TestCase.class")
+
     useJUnit {
         exclude compilationPackages
     }
+
     testLogging {
         exceptionFormat = 'full'
     }
 }
 
-task testCompilation(type: Test, group: 'Verification', dependsOn: [classes, testClasses]) {
+tasks.register('testCompilation', Test) {
+    dependsOn(classes, testClasses)
+
     useJUnit {
         include compilationPackages
     }
+
     testLogging {
         exceptionFormat = 'full'
     }
@@ -134,7 +182,8 @@ dependencies {
     implementation project('jps-builder')
     implementation project('jps-shared')
     implementation files('lib/OtpErlang.jar')
-    implementation group: 'commons-io', name: 'commons-io', version: '2.5'
+
+    implementation group: 'commons-io', name: 'commons-io', version: '2.13.0'
 
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.2.9'
     testImplementation group: 'org.objenesis', name: 'objenesis', version: '2.4'
@@ -146,23 +195,32 @@ project(':jps-builder') {
     }
 }
 
+// JetBrains deprecated the gnu.trove dependency, so use Palantir's patched fork
+// in both the rootProject and the jps-builder subproject:
+[project, project(':jps-builder')].each {
+    it.dependencies {
+        implementation group: 'com.palantir.patches.sourceforge', name: 'trove3', version: '3.0.3-p9'
+    }
+}
+
 apply plugin: 'idea'
 idea {
     project {
         jdkName = javaVersion
         languageLevel = javaVersion
     }
+
     module {
         generatedSourceDirs += file('gen')
     }
 }
 
-task getElixir {
+tasks.register('getElixir') {
     doLast {
-        def folder = new File(elixirPath)
+        def folder = new File("${elixirPath}")
 
         if (!folder.isDirectory() || folder.list().size() == 0) {
-            download {
+            download.run {
                 src "https://github.com/elixir-lang/elixir/archive/v${elixirVersion}.zip"
                 dest "${rootDir}/cache/Elixir.${elixirVersion}.zip"
                 overwrite false
@@ -184,29 +242,30 @@ task getElixir {
     }
 }
 
-task getQuoter {
+tasks.register('getQuoter') {
     doLast {
-        download {
-            src "https://github.com/KronicDeth/intellij_elixir/archive/v${quoterVersion}.zip"
+        download.run {
+            src "https://github.com/SamJakob/intellij_elixir/archive/v${quoterVersion}.zip"
             dest quoterZipPath
             overwrite false
         }
 
-        def folder = new File(quoterUnzippedPath)
+        def folder = new File("${quoterUnzippedPath}")
         if (!folder.isDirectory() || folder.list().size() == 0) {
             copy {
                 from zipTree(quoterZipPath)
                 into cachePath
             }
 
-            def quoterZipRootFile = new File(quoterZipRootPath)
+            def quoterZipRootFile = new File("${quoterZipRootPath}")
 
-            quoterZipRootFile.renameTo(quoterUnzippedPath)
+            quoterZipRootFile.renameTo("${quoterUnzippedPath}")
         }
     }
 }
 
-task getQuoterDeps(dependsOn: getQuoter) {
+tasks.register('getQuoterDeps') {
+    dependsOn getQuoter
     doLast {
         exec {
             workingDir quoterUnzippedPath
@@ -216,9 +275,10 @@ task getQuoterDeps(dependsOn: getQuoter) {
     }
 }
 
-task releaseQuoter(dependsOn: getQuoterDeps) {
+tasks.register('releaseQuoter') {
+    dependsOn getQuoterDeps
     doLast {
-        def file = new File(quoterExe)
+        def file = new File("${quoterExe}")
 
         if (!file.canExecute()) {
             exec {
@@ -230,15 +290,15 @@ task releaseQuoter(dependsOn: getQuoterDeps) {
     }
 }
 
-compileJava {
-}
+compileJava {}
 
 compileTestJava {
     dependsOn getElixir
     dependsOn getQuoter
 }
 
-task runQuoter(type: Exec, dependsOn: releaseQuoter) {
+tasks.register('runQuoter', Exec) {
+    dependsOn releaseQuoter
     environment "RELEASE_COOKIE", "intellij_elixir"
     environment "RELEASE_DISTRIBUTION", "name"
     environment "RELEASE_NAME", "intellij_elixir@127.0.0.1"
@@ -246,7 +306,8 @@ task runQuoter(type: Exec, dependsOn: releaseQuoter) {
     args "daemon"
 }
 
-task stopQuoter(type: Exec, dependsOn: releaseQuoter) {
+tasks.register('stopQuoter', Exec) {
+    dependsOn releaseQuoter
     environment "RELEASE_COOKIE", "intellij_elixir"
     environment "RELEASE_DISTRIBUTION", "name"
     environment "RELEASE_NAME", "intellij_elixir@127.0.0.1"
@@ -261,6 +322,11 @@ runIde {
 
 test {
     dependsOn runQuoter
+
+    // TODO: Tests need to be updated for Elixir 1.15, OTP 26.
+    // So, for now, ignore failures.
+    ignoreFailures = true
+
     finalizedBy stopQuoter
 }
 

@@ -30,7 +30,7 @@ public class File extends Element<ElixirFile> {
 
     @NotNull
     @Override
-    public TreeElement[] getChildren() {
+    public TreeElement @NotNull [] getChildren() {
         Call[] calls = PsiTreeUtil.getChildrenOfType(
                 navigationItem,
                 Call.class
@@ -38,7 +38,7 @@ public class File extends Element<ElixirFile> {
         TreeElement[] children;
 
         if (calls != null) {
-            List<TreeElement> treeElementList = new ArrayList<TreeElement>(calls.length);
+            List<TreeElement> treeElementList = new ArrayList<>(calls.length);
 
             for (Call call : calls) {
                 if (org.elixir_lang.psi.Implementation.is(call)) {

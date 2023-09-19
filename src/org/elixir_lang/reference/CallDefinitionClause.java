@@ -59,7 +59,7 @@ public class CallDefinitionClause extends PsiReferenceBase<Call> implements PsiP
      */
     @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
         return new Object[0];
     }
 
@@ -73,7 +73,7 @@ public class CallDefinitionClause extends PsiReferenceBase<Call> implements PsiP
      */
     @NotNull
     @Override
-    public ResolveResult[] multiResolve(boolean incompleteCode) {
+    public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
         return ResolveCache
                 .getInstance(this.myElement.getProject())
                 .resolveWithCaching(

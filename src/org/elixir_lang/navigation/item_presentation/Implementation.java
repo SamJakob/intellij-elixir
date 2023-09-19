@@ -89,9 +89,8 @@ public class Implementation implements ItemPresentation, Parent {
      *
      * @return final alias in {@link #forName}
      */
-    @Nullable
     @Override
-    public String getPresentableText() {
+    public @NotNull String getPresentableText() {
         String[] aliases = forName.split(".");
         String presentableText;
 

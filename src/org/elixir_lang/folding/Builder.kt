@@ -115,7 +115,7 @@ class Builder : FoldingBuilderEx() {
                                         }
 
                                         private fun execute(call: Call): Boolean {
-                                            for (resolvedFunctionName in RESOLVED_FUNCTION_NAMES) {
+                                            for (resolvedFunctionName in Util.RESOLVED_FUNCTION_NAMES) {
                                                 if (call.isCalling(Module.KERNEL, resolvedFunctionName)) {
                                                     if (isFirstInGroup(call, Module.KERNEL, resolvedFunctionName)) {
                                                         call.finalArguments()?.firstOrNull()
@@ -309,7 +309,7 @@ class Builder : FoldingBuilderEx() {
             ElixirFoldingSettings.getInstance().isReplaceModuleAttributesWithValues
         } else {
             element.children.filterIsInstance<Call>().any { child ->
-                RESOLVED_FUNCTION_NAMES.any { resolvedFunctionName ->
+                Util.RESOLVED_FUNCTION_NAMES.any { resolvedFunctionName ->
                     child.isCalling(Module.KERNEL, resolvedFunctionName) &&
                             ElixirFoldingSettings
                                 .getInstance()
@@ -319,7 +319,8 @@ class Builder : FoldingBuilderEx() {
         }
     }
 
-    companion object {
-        private val RESOLVED_FUNCTION_NAMES = arrayOf(Function.ALIAS, Function.IMPORT, Function.REQUIRE, Function.USE)
+    object Util {
+        val RESOLVED_FUNCTION_NAMES = arrayOf(Function.ALIAS, Function.IMPORT, Function.REQUIRE, Function.USE)
     }
+
 }

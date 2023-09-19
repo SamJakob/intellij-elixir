@@ -202,7 +202,7 @@ public class ParametersPanel extends CommonProgramParametersPanel {
         ComboBoxModel<CodeLoadingMode> codeLoadingModeComboBoxModel = new CollectionComboBoxModel<>(CODE_LOADING_MODE_LIST);
         ComboBox<CodeLoadingMode> codeLoadingModeComboBox = new ComboBox<>(codeLoadingModeComboBoxModel);
         codeLoadingModeComboBox.setRenderer(
-                new SimpleListCellRenderer<CodeLoadingMode>() {
+                new SimpleListCellRenderer<>() {
                     @Override
                     public void customize(@NotNull JList list,
                                           @Nullable CodeLoadingMode value,
@@ -236,7 +236,7 @@ public class ParametersPanel extends CommonProgramParametersPanel {
         ComboBoxModel<Boolean> replaceOsVarsComboBoxModel = new CollectionComboBoxModel<>(REPLACE_OS_VARS_LIST);
         ComboBox<Boolean> replaceOsVarsComboBox = new ComboBox<>(replaceOsVarsComboBoxModel);
         replaceOsVarsComboBox.setRenderer(
-                new SimpleListCellRenderer<Boolean>() {
+                new SimpleListCellRenderer<>() {
                     @Override
                     public void customize(@NotNull JList list,
                                           @Nullable Boolean value,

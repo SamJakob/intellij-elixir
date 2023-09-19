@@ -2,9 +2,11 @@ package org.elixir_lang.credo
 
 import com.intellij.execution.configuration.EnvironmentVariablesData
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service.Level
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
 
+@com.intellij.openapi.components.Service(Level.PROJECT)
 @com.intellij.openapi.components.State(name = "Credo", storages = [Storage(value = "credo.xml")])
 class Service : PersistentStateComponent<State?> {
     private var state = State()

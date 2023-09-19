@@ -49,7 +49,7 @@ public abstract class StubbicBase<T extends PsiElement> extends StubBase<T> impl
      * @see PsiReference#getCanonicalText()
      */
     @Override
-    public Set<String> canonicalNameSet() {
+    public @NotNull Set<String> canonicalNameSet() {
         return canonicalNameSet;
     }
 

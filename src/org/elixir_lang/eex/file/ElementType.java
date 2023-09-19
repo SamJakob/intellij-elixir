@@ -25,7 +25,7 @@ public class ElementType extends IStubFileElementType<Stub> {
     public StubBuilder getBuilder() {
         return new DefaultStubBuilder() {
             @Override
-            protected StubElement createStubForFile(@NotNull PsiFile psiFile) {
+            protected @NotNull StubElement createStubForFile(@NotNull PsiFile psiFile) {
                 StubElement stubElement;
 
                 if (psiFile instanceof File) {

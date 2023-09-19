@@ -33,7 +33,7 @@ class ElixirSdkForModuleStep(private val wizardContext: WizardContext) : ModuleW
     private val jdkComboBox: JdkComboBox = JdkComboBox(
         this.project,
         projectSdksModel,
-        { it == Type.instance },
+        { it == Type.Util.instance },
         { elixirSdkHasErlangSdk(it) },
         null,
         null

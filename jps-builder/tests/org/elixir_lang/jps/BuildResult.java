@@ -22,9 +22,9 @@ public class BuildResult implements MessageHandler {
   private boolean myUpToDate = true;
 
   public BuildResult(){
-    myErrorMessages = new ArrayList<BuildMessage>();
-    myWarnMessages = new ArrayList<BuildMessage>();
-    myInfoMessages = new ArrayList<BuildMessage>();
+    myErrorMessages = new ArrayList<>();
+    myWarnMessages = new ArrayList<>();
+    myInfoMessages = new ArrayList<>();
   }
 
   @Override
@@ -56,15 +56,15 @@ public class BuildResult implements MessageHandler {
   }
 
   public void assertSuccessful(){
-    Function<BuildMessage, String> toStringFunction = StringUtil.createToStringFunction(BuildMessage.class);
-    Assert.assertTrue("Build failed. \nErrors:\n" + StringUtil.join(myErrorMessages, toStringFunction, "\n") +
-        "\nInfo messages:\n" + StringUtil.join(myInfoMessages, toStringFunction, "\n"), isSuccessful());
+    Assert.assertTrue(
+        "Build failed. \nErrors:\n" + StringUtil.join(myErrorMessages, BuildMessage::getMessageText, "\n") +
+        "\nInfo messages:\n" + StringUtil.join(myInfoMessages, BuildMessage::getMessageText, "\n"), isSuccessful());
   }
 
   @NotNull
   public List<BuildMessage> getMessages(@NotNull BuildMessage.Kind kind){
     if(kind == BuildMessage.Kind.ERROR) return myErrorMessages;
-    else if(kind == BuildMessage.Kind.WARNING) return  myWarnMessages;
+    else if(kind == BuildMessage.Kind.WARNING) return myWarnMessages;
     else return myInfoMessages;
   }
 }

@@ -45,7 +45,7 @@ class Builder : ProjectImportBuilder<OtpApp>() {
 
     override fun getIcon(): Icon = Icons.PROJECT
     override fun getName(): String = "Mix"
-    override fun isSuitableSdkType(sdkType: SdkTypeId): Boolean = sdkType === Type.instance
+    override fun isSuitableSdkType(sdkType: SdkTypeId): Boolean = sdkType === Type.Util.instance
     override fun getList(): List<OtpApp> = myFoundOtpApps
 
     @Throws(ConfigurationException::class)
@@ -182,8 +182,8 @@ class Builder : ProjectImportBuilder<OtpApp>() {
             val selectedSdk = projectRootMgr.projectSdk
             val fixedProjectSdk: Sdk?
 
-            if (selectedSdk == null || selectedSdk.sdkType !== Type.instance) {
-                fixedProjectSdk = ProjectJdkTable.getInstance().findMostRecentSdkOfType(Type.instance)
+            if (selectedSdk == null || selectedSdk.sdkType !== Type.Util.instance) {
+                fixedProjectSdk = ProjectJdkTable.getInstance().findMostRecentSdkOfType(Type.Util.instance)
                 ApplicationManager.getApplication().runWriteAction { projectRootMgr.projectSdk = fixedProjectSdk }
             } else {
                 fixedProjectSdk = selectedSdk

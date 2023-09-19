@@ -13,7 +13,7 @@ public class Atom implements ResolveCache.PolyVariantResolver<org.elixir_lang.re
 
     @NotNull
     @Override
-    public ResolveResult[] resolve(@NotNull org.elixir_lang.reference.Atom atom, boolean incompleteCode) {
+    public ResolveResult @NotNull [] resolve(@NotNull org.elixir_lang.reference.Atom atom, boolean incompleteCode) {
         ElixirAtom element = atom.getElement();
         Resolvable resolvable = resolvable(element);
 

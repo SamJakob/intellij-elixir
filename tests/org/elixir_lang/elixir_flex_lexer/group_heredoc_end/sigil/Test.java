@@ -2,6 +2,7 @@ package org.elixir_lang.elixir_flex_lexer.group_heredoc_end.sigil;
 
 import com.intellij.psi.tree.IElementType;
 import org.elixir_lang.elixir_flex_lexer.TokenTest;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Ignore;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public abstract class Test extends TokenTest {
      */
 
     @Override
-    protected void start(CharSequence charSequence) {
+    protected void start(@NotNull CharSequence charSequence) {
         CharSequence fullCharSequence = sigilName() + promoter() + '\n' + charSequence;
         super.start(fullCharSequence);
         // consume sigilName

@@ -1,9 +1,11 @@
 package org.elixir_lang.facet
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 
+@Service(Service.Level.APP)
 class SdksService {
     private var model: ProjectSdksModel? = null
 

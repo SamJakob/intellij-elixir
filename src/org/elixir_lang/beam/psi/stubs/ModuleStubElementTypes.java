@@ -1,6 +1,7 @@
 package org.elixir_lang.beam.psi.stubs;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -13,6 +14,7 @@ import org.elixir_lang.type.Visibility;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static org.elixir_lang.psi.stub.call.Deserialized.readGuarded;
 import static org.elixir_lang.psi.stub.call.Deserialized.writeGuarded;
@@ -23,7 +25,7 @@ public interface ModuleStubElementTypes {
     /**
      * See {@link com.intellij.psi.impl.java.stubs.JavaStubElementTypes#CLASS}
      */
-    ModuleElementType<ModuleStub<?>, org.elixir_lang.beam.psi.Module> MODULE = new ModuleElementType<ModuleStub<?>, org.elixir_lang.beam.psi.Module>("Module") {
+    ModuleElementType<ModuleStub<?>, org.elixir_lang.beam.psi.Module> MODULE = new ModuleElementType<>("MODULE") {
         @NotNull
         @Override
         public ASTNode createCompositeNode() {
@@ -36,7 +38,7 @@ public interface ModuleStubElementTypes {
         }
 
         @Override
-        public ModuleStub<?> createStub(@NotNull org.elixir_lang.beam.psi.Module psi, StubElement<?> parentStub) {
+        public @NotNull ModuleStub<?> createStub(@NotNull org.elixir_lang.beam.psi.Module psi, StubElement<? extends PsiElement> parentStub) {
             return super.createStub(psi, parentStub);
         }
 
@@ -51,16 +53,21 @@ public interface ModuleStubElementTypes {
                                          @NotNull StubElement parentStub) throws IOException {
             Deserialized deserialized = Deserialized.deserialize(stubInputStream);
 
-            return new ModuleStubImpl(parentStub, deserialized);
+            return new ModuleStubImpl<>(parentStub, deserialized);
         }
 
         @Override
         public void indexStub(@NotNull ModuleStub<?> stub, @NotNull IndexSink sink) {
             indexStubbic(stub, sink);
         }
+
+        @Override
+        public @NotNull String getExternalId() {
+            return "beam.MODULE";
+        }
     };
 
-    ModuleElementType<TypeDefinitionStub<?>, TypeDefinition> TYPE_DEFINITION = new ModuleElementType<TypeDefinitionStub<?>, TypeDefinition>("TypeDefinition") {
+    ModuleElementType<TypeDefinitionStub<?>, TypeDefinition> TYPE_DEFINITION = new ModuleElementType<>("TYPE_DEFINITION") {
         @NotNull
         @Override
         public ASTNode createCompositeNode() {
@@ -73,7 +80,7 @@ public interface ModuleStubElementTypes {
         }
 
         @Override
-        public TypeDefinitionStub<?> createStub(@NotNull TypeDefinition psi, StubElement<?> parentStub) {
+        public @NotNull TypeDefinitionStub<?> createStub(@NotNull TypeDefinition psi, StubElement<?> parentStub) {
             return super.createStub(psi, parentStub);
         }
 
@@ -81,10 +88,10 @@ public interface ModuleStubElementTypes {
         @Override
         public TypeDefinitionStub<?> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
             Visibility visibility = Visibility.valueOf(dataStream.readNameString());
-            String name = dataStream.readNameString();
+            String name = Objects.requireNonNull(dataStream.readNameString());
             int arity = dataStream.readVarInt();
 
-            return new TypeDefinitionStubImpl((ModuleStubImpl<ModuleImpl<?>>) parentStub, visibility, name, arity);
+            return new TypeDefinitionStubImpl<TypeDefinition>((ModuleStubImpl<?>) parentStub, visibility, name, arity);
         }
 
         @Override
@@ -98,9 +105,14 @@ public interface ModuleStubElementTypes {
         public void indexStub(@NotNull TypeDefinitionStub<?> stub, @NotNull IndexSink sink) {
             sink.occurrence(AllName.KEY, stub.getName());
         }
+
+        @Override
+        public @NotNull String getExternalId() {
+            return "beam.TYPE_DEFINITION";
+        }
     };
 
-    ModuleElementType<CallDefinitionStub<?>, CallDefinition> CALL_DEFINITION = new ModuleElementType<CallDefinitionStub<?>, CallDefinition>("CallDefinition") {
+    ModuleElementType<CallDefinitionStub<?>, CallDefinition> CALL_DEFINITION = new ModuleElementType<CallDefinitionStub<?>, CallDefinition>("CALL_DEFINITION") {
         @NotNull
         @Override
         public ASTNode createCompositeNode() {
@@ -119,7 +131,7 @@ public interface ModuleStubElementTypes {
             Deserialized deserialized = Deserialized.deserialize(stubInputStream);
             int callDefinitionClauseArity = deserializeCallDefinitionClauseArity(stubInputStream);
 
-            return new CallDefinitionStubImpl((ModuleStub<?>) parentStub, deserialized, callDefinitionClauseArity);
+            return new CallDefinitionStubImpl<CallDefinition>((ModuleStub<?>) parentStub, deserialized, callDefinitionClauseArity);
         }
 
         int deserializeCallDefinitionClauseArity(@NotNull StubInputStream stubInputStream) throws IOException {
@@ -139,6 +151,11 @@ public interface ModuleStubElementTypes {
         @Override
         public void indexStub(@NotNull CallDefinitionStub<?> stub, @NotNull IndexSink sink) {
             indexStubbic(stub, sink);
+        }
+
+        @Override
+        public @NotNull String getExternalId() {
+            return "beam.CALL_DEFINITION";
         }
     };
 

@@ -83,7 +83,7 @@ public class Exception extends Element<Call> {
         assert callbackName.equals("exception") || callbackName.equals("message");
 
         if (callbacks == null) {
-            callbacks = new ArrayList<CallDefinition>();
+            callbacks = new ArrayList<>();
         }
 
         callbacks.add(callback);
@@ -103,7 +103,7 @@ public class Exception extends Element<Call> {
         assert finalArguments.length == 1;
 
         PsiElement finalArgument = finalArguments[0];
-        Map<PsiElement, PsiElement> defaultValueElementByKeyElement = new HashMap<PsiElement, PsiElement>(finalArguments.length);
+        Map<PsiElement, PsiElement> defaultValueElementByKeyElement = new HashMap<>(finalArguments.length);
 
         if (finalArgument instanceof ElixirAccessExpression) {
             PsiElement accessExpressionChild = stripAccessExpression(finalArgument);
@@ -147,8 +147,8 @@ public class Exception extends Element<Call> {
      */
     @NotNull
     @Override
-    public TreeElement[] getChildren() {
-        List<TreeElement> childList = new ArrayList<TreeElement>();
+    public TreeElement @NotNull [] getChildren() {
+        List<TreeElement> childList = new ArrayList<>();
 
         childList.add(
                 new Structure(modular, navigationItem)

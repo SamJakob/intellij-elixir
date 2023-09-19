@@ -113,7 +113,7 @@ public class BuilderTest extends JpsBuildTestCase {
         assertNotNull(FileUtil.findFileInProvidedPath(absolutePath, "Elixir.MixCompiled.beam"));
     }
 
-    private JpsSdk<SdkProperties> addElixirSdk(@NotNull JpsSdk erlangSdk) {
+    private JpsSdk<SdkProperties> addElixirSdk(@NotNull JpsSdk<?> erlangSdk) {
         JpsTypedLibrary<JpsSdk<SdkProperties>> elixirTypedLibrary = myModel
                 .getGlobal()
                 .addSdk("Elixir " + elixirVersion(), elixirSdkHome(), elixirVersion(), Elixir.INSTANCE);

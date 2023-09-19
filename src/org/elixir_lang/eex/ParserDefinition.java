@@ -27,12 +27,12 @@ public class ParserDefinition implements com.intellij.lang.ParserDefinition {
     }
 
     @Override
-    public PsiParser createParser(Project project) {
+    public @NotNull PsiParser createParser(Project project) {
         return new Parser();
     }
 
     @Override
-    public IFileElementType getFileNodeType() {
+    public @NotNull IFileElementType getFileNodeType() {
         return ElementType.INSTANCE;
     }
 
@@ -61,12 +61,12 @@ public class ParserDefinition implements com.intellij.lang.ParserDefinition {
     }
 
     @Override
-    public PsiFile createFile(FileViewProvider fileViewProvider) {
+    public @NotNull PsiFile createFile(@NotNull FileViewProvider fileViewProvider) {
         return new File(fileViewProvider);
     }
 
     @Override
-    public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
+    public @NotNull SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
         return SpaceRequirements.MUST_NOT;
     }
 }

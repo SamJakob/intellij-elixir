@@ -76,7 +76,7 @@ public class Field extends Element<ElixirAtom> {
      */
     @NotNull
     @Override
-    public TreeElement[] getChildren() {
+    public TreeElement @NotNull [] getChildren() {
         return new TreeElement[0];
     }
 

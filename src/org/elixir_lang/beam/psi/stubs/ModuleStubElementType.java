@@ -10,25 +10,21 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class ModuleStubElementType<S extends StubElement<?>, P extends PsiElement>
         extends ILightStubElementType<S, P> implements ICompositeElementType {
-    protected ModuleStubElementType(@NotNull @NonNls String debugName) {
-        super(debugName, ElixirLanguage.INSTANCE);
+    protected ModuleStubElementType(
+        @NotNull @NonNls String id
+    ) {
+        super(id, ElixirLanguage.INSTANCE);
     }
 
     @SuppressWarnings("MethodOverloadsMethodOfSuperclass")
     public abstract P createPsi(@NotNull ASTNode node);
 
     @Override
-    public S createStub(@NotNull P psi, StubElement<?> parentStub) {
+    public @NotNull S createStub(@NotNull P psi, StubElement<? extends PsiElement> parentStub) {
         final String message = "Should not be called. Element=" + psi +
                 "; class" + psi.getClass() +
                 "; file=" + (psi.isValid() ? psi.getContainingFile() : "-");
 
         throw new UnsupportedOperationException(message);
-    }
-
-    @NotNull
-    @Override
-    public String getExternalId() {
-        return "beam." + toString();
     }
 }

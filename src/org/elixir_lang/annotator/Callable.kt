@@ -9,12 +9,11 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import gnu.trove.set.hash.THashSet
 import org.elixir_lang.ElixirSyntaxHighlighter
 import org.elixir_lang.beam.psi.impl.CallDefinitionImpl
-import org.elixir_lang.psi.AtOperation
-import org.elixir_lang.psi.AtUnqualifiedNoParenthesesCall
-import org.elixir_lang.psi.CallDefinitionClause
-import org.elixir_lang.psi.UnqualifiedBracketOperation
+import org.elixir_lang.psi.*
+import org.elixir_lang.psi.Alias
 import org.elixir_lang.psi.call.Call
 import org.elixir_lang.psi.call.name.Module.KERNEL
 import org.elixir_lang.psi.call.name.Module.KERNEL_SPECIAL_FORMS
@@ -22,7 +21,6 @@ import org.elixir_lang.reference.Callable.Companion.BIT_STRING_TYPES
 import org.elixir_lang.reference.Callable.Companion.isBitStreamSegmentOption
 import org.elixir_lang.safeMultiResolve
 import org.elixir_lang.structure_view.element.Timed
-import java.util.*
 
 /**
  * Annotates callables.
@@ -105,7 +103,7 @@ class Callable : Annotator, DumbAware {
                                 }
                             }
 
-                        if (resolvedCollection != null && resolvedCollection.isNotEmpty()) {
+                        if (!resolvedCollection.isNullOrEmpty()) {
                             highlight(call, reference.rangeInElement, resolvedCollection, holder)
                         } else if (call.hasDoBlockOrKeyword()) {
                             /* Even though it can't be resolved, it is called like a macro, so highlight like one */
@@ -115,6 +113,14 @@ class Callable : Annotator, DumbAware {
                                     holder,
                                     ElixirSyntaxHighlighter.MACRO_CALL
                                 )
+                            }
+                        } else if (Import.`is`(call) || Alias.`is`(call) || Require.`is`(call)) {
+                            /* Handles cases where the arity of Import, Alias, Require calls don't match the
+                               invocation (on account of opts being optional in practice, but not in the definition) */
+                            call.functionNameElement()?.let { functionNameElement ->
+                                Util.PREDEFINED_MACRO_CALL_TEXT_ATTRIBUTES_KEYS.forEach {
+                                    highlight(functionNameElement.textRange, holder, it)
+                                }
                             }
                         }
                     } else if (isBitStreamSegmentOption(call)) {
@@ -156,13 +162,12 @@ class Callable : Annotator, DumbAware {
         )
     }
 
-    private fun callHighlight(resolved: Call, previousCallHighlight: CallHighlight?): CallHighlight? =
-        when {
+    private fun callHighlight(resolved: Call, previousCallHighlight: CallHighlight?): CallHighlight? = when {
             CallDefinitionClause.isFunction(resolved) -> {
-                val referrerTextAttributesKeys = referrerTextAttributesKeys(
+                val referrerTextAttributesKeys = Util.referrerTextAttributesKeys(
                     resolved,
-                    FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS,
-                    PREDEFINED_FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS
+                    Util.FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS,
+                    Util.PREDEFINED_FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS
                 )
 
                 CallHighlight.nullablePut(
@@ -170,11 +175,12 @@ class Callable : Annotator, DumbAware {
                     referrerTextAttributesKeys
                 )
             }
+
             CallDefinitionClause.isMacro(resolved) -> {
-                val referrerTextAttributesKeys = referrerTextAttributesKeys(
+                val referrerTextAttributesKeys = Util.referrerTextAttributesKeys(
                     resolved,
-                    MACRO_CALL_TEXT_ATTRIBUTES_KEYS,
-                    PREDEFINED_MACRO_CALL_TEXT_ATTRIBUTES_KEYS
+                    Util.MACRO_CALL_TEXT_ATTRIBUTES_KEYS,
+                    Util.PREDEFINED_MACRO_CALL_TEXT_ATTRIBUTES_KEYS
                 )
 
                 CallHighlight.nullablePut(
@@ -182,24 +188,28 @@ class Callable : Annotator, DumbAware {
                     referrerTextAttributesKeys
                 )
             }
+
             org.elixir_lang.reference.Callable.isParameter(resolved) -> {
                 CallHighlight.nullablePut(
                     previousCallHighlight,
-                    PARAMETER_TEXT_ATTRIBUTE_KEYS
+                    Util.PARAMETER_TEXT_ATTRIBUTE_KEYS
                 )
             }
+
             org.elixir_lang.reference.Callable.isParameterWithDefault(resolved) -> {
                 CallHighlight.nullablePut(
                     previousCallHighlight,
-                    PARAMETER_TEXT_ATTRIBUTE_KEYS
+                    Util.PARAMETER_TEXT_ATTRIBUTE_KEYS
                 )
             }
+
             org.elixir_lang.reference.Callable.isVariable(resolved) -> {
                 CallHighlight.nullablePut(
                     previousCallHighlight,
-                    VARIABLE_TEXT_ATTRIBUTE_KEYS
+                    Util.VARIABLE_TEXT_ATTRIBUTE_KEYS
                 )
             }
+
             else -> {
                 previousCallHighlight
             }
@@ -213,24 +223,24 @@ class Callable : Annotator, DumbAware {
                 if (org.elixir_lang.reference.Callable.isIgnored(resolved)) {
                     CallHighlight.nullablePut(
                         previousCallHighlight,
-                        IGNORED_VARIABLE_TEXT_ATTRIBUTE_KEYS
+                        Util.IGNORED_VARIABLE_TEXT_ATTRIBUTE_KEYS
                     )
                 } else {
                     previousCallHighlight
                 }
         }
 
-    private fun callHighlight(resolved: CallDefinitionImpl<*>, previousCallHighlight: CallHighlight?): CallHighlight? {
+    private fun callHighlight(resolved: CallDefinitionImpl<*>, previousCallHighlight: CallHighlight?): CallHighlight {
         val referrerTextAttributesKeys = when (resolved.time) {
-            Timed.Time.COMPILE -> referrerTextAttributesKeys(
+            Timed.Time.COMPILE -> Util.referrerTextAttributesKeys(
                 resolved,
-                MACRO_CALL_TEXT_ATTRIBUTES_KEYS,
-                PREDEFINED_MACRO_CALL_TEXT_ATTRIBUTES_KEYS
+                Util.MACRO_CALL_TEXT_ATTRIBUTES_KEYS,
+                Util.PREDEFINED_MACRO_CALL_TEXT_ATTRIBUTES_KEYS
             )
-            Timed.Time.RUN -> referrerTextAttributesKeys(
+            Timed.Time.RUN -> Util.referrerTextAttributesKeys(
                 resolved,
-                FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS,
-                PREDEFINED_FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS
+                Util.FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS,
+                Util.PREDEFINED_FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS
             )
         }
 
@@ -315,7 +325,7 @@ class Callable : Annotator, DumbAware {
         fun put(referrerTextAttributeKeys: Array<TextAttributesKey>?): CallHighlight {
             val updatedReferrerTextAttributeKeys = bestReferrerTextAttributeKeys(referrerTextAttributeKeys)
 
-            return if (updatedReferrerTextAttributeKeys == this.referrerTextAttributeKeys) {
+            return if (updatedReferrerTextAttributeKeys.contentEquals(this.referrerTextAttributeKeys)) {
                 this
             } else {
                 CallHighlight(
@@ -361,25 +371,23 @@ class Callable : Annotator, DumbAware {
         }
     }
 
-    companion object {
-        private val FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS = arrayOf(ElixirSyntaxHighlighter.FUNCTION_CALL)
-        private val IGNORED_VARIABLE_TEXT_ATTRIBUTE_KEYS = arrayOf(ElixirSyntaxHighlighter.IGNORED_VARIABLE)
-        private val MACRO_CALL_TEXT_ATTRIBUTES_KEYS = arrayOf(ElixirSyntaxHighlighter.MACRO_CALL)
-        private val PARAMETER_TEXT_ATTRIBUTE_KEYS = arrayOf(ElixirSyntaxHighlighter.PARAMETER)
-        private val PREDEFINED_FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS =
+    object Util {
+        internal val FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS = arrayOf(ElixirSyntaxHighlighter.FUNCTION_CALL)
+        internal val IGNORED_VARIABLE_TEXT_ATTRIBUTE_KEYS = arrayOf(ElixirSyntaxHighlighter.IGNORED_VARIABLE)
+        internal val MACRO_CALL_TEXT_ATTRIBUTES_KEYS = arrayOf(ElixirSyntaxHighlighter.MACRO_CALL)
+        internal val PARAMETER_TEXT_ATTRIBUTE_KEYS = arrayOf(ElixirSyntaxHighlighter.PARAMETER)
+        internal val PREDEFINED_FUNCTION_CALL_TEXT_ATTRIBUTE_KEYS =
             arrayOf(ElixirSyntaxHighlighter.FUNCTION_CALL, ElixirSyntaxHighlighter.PREDEFINED_CALL)
-
-        private val PREDEFINED_LOCATION_STRING_SET = HashSet(
-            Arrays.asList(
+        private val PREDEFINED_LOCATION_STRING_SET = THashSet(
+            listOf(
                 KERNEL,
                 KERNEL_SPECIAL_FORMS
             )
         )
-        private val PREDEFINED_MACRO_CALL_TEXT_ATTRIBUTES_KEYS =
+        internal val PREDEFINED_MACRO_CALL_TEXT_ATTRIBUTES_KEYS =
             arrayOf(ElixirSyntaxHighlighter.MACRO_CALL, ElixirSyntaxHighlighter.PREDEFINED_CALL)
-        private val VARIABLE_TEXT_ATTRIBUTE_KEYS = arrayOf(ElixirSyntaxHighlighter.VARIABLE)
-
-        private fun referrerTextAttributesKeys(
+        internal val VARIABLE_TEXT_ATTRIBUTE_KEYS = arrayOf(ElixirSyntaxHighlighter.VARIABLE)
+        internal fun referrerTextAttributesKeys(
             psiElement: PsiElement,
             standardTextAttributeKeys: Array<TextAttributesKey>,
             predefinedTextAttributesKeys: Array<TextAttributesKey>
@@ -390,6 +398,7 @@ class Callable : Annotator, DumbAware {
                 } else {
                     null
                 }
+
                 is NavigationItem -> {
                     psiElement.presentation?.locationString?.let { locationString ->
                         if (PREDEFINED_LOCATION_STRING_SET.any { locationString.endsWith(it) }) {
@@ -399,11 +408,14 @@ class Callable : Annotator, DumbAware {
                         }
                     }
                 }
+
                 else -> null
             }
                 ?: standardTextAttributeKeys
 
+
         private fun sameFile(referrer: PsiElement, resolved: PsiElement): Boolean =
             referrer.containingFile.virtualFile == resolved.containingFile.virtualFile
     }
+
 }

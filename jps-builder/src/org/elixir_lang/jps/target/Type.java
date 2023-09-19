@@ -30,7 +30,7 @@ public class Type extends ModuleBasedBuildTargetType<Target>{
   @NotNull
   @Override
   public List<Target> computeAllTargets(@NotNull JpsModel model) {
-    List<Target> targets = new ArrayList<Target>();
+    List<Target> targets = new ArrayList<>();
     for (JpsTypedModule<JpsDummyElement> module : model.getProject().getModules(ModuleType.INSTANCE)){
       targets.add(new Target(this, module));
     }
@@ -40,17 +40,17 @@ public class Type extends ModuleBasedBuildTargetType<Target>{
   @NotNull
   @Override
   public BuildTargetLoader<Target> createLoader(@NotNull final JpsModel model) {
-    return new BuildTargetLoader<Target>() {
-      @Nullable
-      @Override
-      public Target createTarget(@NotNull String targetId) {
-        for (JpsTypedModule<JpsDummyElement> module : model.getProject().getModules(ModuleType.INSTANCE)){
-          if(module.getName().equals(targetId)){
-            return new Target(Type.this, module);
-          }
+    return new BuildTargetLoader<>() {
+        @Nullable
+        @Override
+        public Target createTarget(@NotNull String targetId) {
+            for (JpsTypedModule<JpsDummyElement> module : model.getProject().getModules(ModuleType.INSTANCE)) {
+                if (module.getName().equals(targetId)) {
+                    return new Target(Type.this, module);
+                }
+            }
+            return null;
         }
-        return null;
-      }
     };
   }
 

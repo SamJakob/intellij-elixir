@@ -29,7 +29,6 @@ public class CallReference extends Element<QuotableKeywordPair> implements Timed
     private final Modular modular;
     @NotNull
     private final String name;
-    @NotNull
     private final boolean overridable;
     @NotNull
     private final Timed.Time time;
@@ -100,7 +99,7 @@ public class CallReference extends Element<QuotableKeywordPair> implements Timed
      */
     @NotNull
     @Override
-    public TreeElement[] getChildren() {
+    public TreeElement @NotNull [] getChildren() {
         return new TreeElement[0];
     }
 

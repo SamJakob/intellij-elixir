@@ -15,7 +15,7 @@ public class CodeStyleConfigurable extends CodeStyleAbstractConfigurable {
     }
 
     @Override
-    protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
+    protected @NotNull CodeStyleAbstractPanel createPanel(@NotNull CodeStyleSettings settings) {
         return new CodeStylePanel(getCurrentSettings(), settings);
     }
 

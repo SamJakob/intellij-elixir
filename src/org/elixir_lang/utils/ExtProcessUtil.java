@@ -38,14 +38,14 @@ public final class ExtProcessUtil {
       final Process cmdRunner = new GeneralCommandLine(command).withCharset(Charsets.UTF_8).createProcess();
       ExecutorService singleTreadExecutor = Executors.newSingleThreadExecutor();
       try {
-        Future<ExtProcessOutput> cmdRunnerFuture = singleTreadExecutor.submit(new Callable<ExtProcessOutput>() {
-          @Override
-          public ExtProcessOutput call() throws Exception {
-            cmdRunner.waitFor();
-            String stdOut = readLine(cmdRunner.getInputStream());
-            String stdErr = readLine(cmdRunner.getErrorStream());
-            return new ExtProcessOutput(stdOut, stdErr);
-          }
+        Future<ExtProcessOutput> cmdRunnerFuture = singleTreadExecutor.submit(new Callable<>() {
+            @Override
+            public ExtProcessOutput call() throws Exception {
+                cmdRunner.waitFor();
+                String stdOut = readLine(cmdRunner.getInputStream());
+                String stdErr = readLine(cmdRunner.getErrorStream());
+                return new ExtProcessOutput(stdOut, stdErr);
+            }
         });
 
         try {

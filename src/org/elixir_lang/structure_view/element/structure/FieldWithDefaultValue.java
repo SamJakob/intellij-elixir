@@ -67,7 +67,7 @@ public class FieldWithDefaultValue extends Element<QuotableKeywordPair> {
      */
     @NotNull
     @Override
-    public TreeElement[] getChildren() {
+    public TreeElement @NotNull [] getChildren() {
         return new TreeElement[0];
     }
 

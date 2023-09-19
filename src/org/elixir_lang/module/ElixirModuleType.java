@@ -50,17 +50,17 @@ public class ElixirModuleType extends ModuleType<ElixirModuleBuilder>{
   }
 
   @Override
-  public Icon getNodeIcon(@Deprecated boolean isOpened) {
+  public @NotNull Icon getNodeIcon(boolean isOpened) {
     return Icons.MODULE;
   }
 
   @NotNull
   @Override
-  public ModuleWizardStep[] createWizardSteps(@NotNull WizardContext wizardContext,
-                                              @NotNull final ElixirModuleBuilder moduleBuilder,
-                                              @NotNull ModulesProvider modulesProvider) {
+  public ModuleWizardStep @NotNull [] createWizardSteps(@NotNull WizardContext wizardContext,
+                                                        @NotNull final ElixirModuleBuilder moduleBuilder,
+                                                        @NotNull ModulesProvider modulesProvider) {
     return new ModuleWizardStep[]{
-        new ProjectJdkForModuleStep(wizardContext, Type.getInstance()){
+        new ProjectJdkForModuleStep(wizardContext, Type.Util.getInstance()){
           public void updateDataModel(){
             super.updateDataModel();
             moduleBuilder.setModuleJdk(getJdk());

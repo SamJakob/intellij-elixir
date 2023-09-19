@@ -39,31 +39,12 @@ public class DecompilerTest extends PlatformTestCase {
                         "  A set of functions that perform calculations on bits.\n" +
                         "\n" +
                         "  All bitwise functions work only on integers; otherwise an\n" +
-                        "  `ArithmeticError` is raised.\n" +
+                        "  `ArithmeticError` is raised. The functions `band/2`,\n" +
+                        "  `bor/2`, `bsl/2`, and `bsr/2` also have operators,\n" +
+                        "  respectively: `&&&/2`, `|||/2`, `<<</2`, and `>>>/2`.\n" +
                         "\n" +
-                        "  The functions in this module come in two flavors: named or\n" +
-                        "  operators. For example:\n" +
+                        "  ## Guards" +
                         "\n" +
-                        "      iex> use Bitwise\n" +
-                        "      iex> bnot(1) # named\n" +
-                        "      -2\n" +
-                        "      iex> 1 &&& 1 # operator\n" +
-                        "      1\n" +
-                        "\n" +
-                        "  If you prefer to use only operators or skip them, you can\n" +
-                        "  pass the following options:\n" +
-                        "\n" +
-                        "    * `:only_operators` - includes only operators\n" +
-                        "    * `:skip_operators` - skips operators\n" +
-                        "\n" +
-                        "  For example:\n" +
-                        "\n" +
-                        "      iex> use Bitwise, only_operators: true\n" +
-                        "      iex> 1 &&& 1\n" +
-                        "      1\n" +
-                        "\n" +
-                        "  When invoked with no options, `use Bitwise` is equivalent\n" +
-                        "  to `import Bitwise`.\n" +
                         "\n" +
                         "  All bitwise functions can be used in guards:\n" +
                         "\n" +
@@ -79,6 +60,11 @@ public class DecompilerTest extends PlatformTestCase {
                         "  \"\"\"\n" +
                         "\n" +
                         "  # Macros\n" +
+                        "\n\n" +
+                        "  @deprecated \"\"\"\n" +
+                        "  import Bitwise instead\n" +
+                        "  \"\"\"" +
+                        "\n" +
                         "\n" +
                         "  @doc false\n" +
                         "  defmacro __using__(options) do\n" +
@@ -321,25 +307,15 @@ public class DecompilerTest extends PlatformTestCase {
                         "    Bitwise.bor(left, right)\n" +
                         "  end\n" +
                         "\n" +
-                        "  @doc ~S\"\"\"\n" +
-                        "  Bitwise NOT unary operator.\n" +
-                        "\n" +
-                        "  Calculates the bitwise NOT of the argument.\n" +
-                        "\n" +
-                        "  Allowed in guard tests. Inlined by the compiler.\n" +
-                        "\n" +
-                        "  ## Examples\n" +
-                        "\n" +
-                        "      iex> ~~~2\n" +
-                        "      -3\n" +
-                        "\n" +
-                        "      iex> ~~~2 &&& 3\n" +
-                        "      1\n" +
-                        "\n" +
-                        "\n" +
-                        "  \"\"\"\n" +
+                        "  @doc false\n" +
                         "  def ~~~(expr) do\n" +
                         "    :erlang.bnot(expr)\n" +
+                        "  end\n" +
+                        "\n" +
+                        "  # Private Functions\n" +
+                        "\n" +
+                        "  defp unquote(:\"-inlined-__info__/1-\")(p0) do\n" +
+                        "    # body not decompiled\n" +
                         "  end\n" +
                         "end\n",
                 decompiled.toString()
